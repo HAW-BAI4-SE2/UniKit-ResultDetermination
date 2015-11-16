@@ -1,10 +1,12 @@
 package net.unikit.result_determination.models.implementations;
 
 import net.unikit.database.external.interfaces.Course;
+import net.unikit.database.unikit_.interfaces.CourseRegistration;
 import net.unikit.database.unikit_.interfaces.TeamRegistration;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
 import net.unikit.result_determination.models.interfaces.AllocationPlanAlgorithm;
+import net.unikit.result_determination.models.interfaces.Registrations;
 
 import java.util.List;
 
@@ -19,8 +21,14 @@ public class RandomAllocationPlanAlgorithmImpl implements AllocationPlanAlgorith
         this.settings = settings;
     }
 
+
     @Override
-    public AllocationPlan calculateAllocationPlan(List<TeamRegistration> teams, List<Course> courses) {
+    public AllocationPlan calculateAllocationPlan(List<TeamRegistration> teams, List<CourseRegistration> teamless, List<Course> courses) {
+        return null;
+    }
+
+    @Override
+    public AllocationPlan calculateAllocationPlan(Registrations registrations, List<Course> courses) {
         return null;
     }
 }
