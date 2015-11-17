@@ -1,6 +1,7 @@
 package net.unikit.result_determination.models.implementations;
 
 import net.unikit.database.external.interfaces.Student;
+import net.unikit.database.external.interfaces.StudentManager;
 import net.unikit.database.unikit_.interfaces.*;
 import net.unikit.result_determination.models.interfaces.RegistrationReader;
 import net.unikit.result_determination.models.interfaces.Registrations;
@@ -15,10 +16,13 @@ public class RegistrationReaderImpl implements RegistrationReader {
 
     private CourseRegistrationManager courseRegistrationManager;
     private TeamRegistrationManager teamRegistrationManager;
+    private StudentManager studentManager;
 
-    public RegistrationReaderImpl(CourseRegistrationManager courseRegistrationManager,TeamRegistrationManager teamRegistrationManager ){
+    public RegistrationReaderImpl(CourseRegistrationManager courseRegistrationManager,TeamRegistrationManager teamRegistrationManager,
+                                  StudentManager studentManager){
         this.courseRegistrationManager = courseRegistrationManager;
         this.teamRegistrationManager = teamRegistrationManager;
+        this.studentManager = studentManager;
     }
 
     @Override
@@ -33,7 +37,8 @@ public class RegistrationReaderImpl implements RegistrationReader {
         List<CourseRegistration> courseRegistrations = courseRegistrationManager.getAllCourseRegistrations();
         List<Student> teamless = new ArrayList<>();
         for(CourseRegistration t : courseRegistrations){
-            teamless.add(t.getStudentNumber());  // TODO t.getStudent() Hier ist es nicht einheitlich und nicht objektorientiert.
+            Student s = studentManager.getStudent(t.getStudentNumber());
+            teamless.add(s);  // TODO besser wäre hier: t.getStudent() so ist es nicht einheitlich und nicht objektorientiert.
         }
 
         return RegistrationsImpl.create(teams, teamless);

@@ -29,6 +29,13 @@ public class RandomAllocationPlanAlgorithmImpl implements AllocationPlanAlgorith
 
     @Override
     public AllocationPlan calculateAllocationPlan(Registrations registrations, List<Course> courses) {
-        return null;
+        AllocationPlan allocPlan = new AllocationPlanImpl();
+
+        for(Course c : courses){
+
+        }
+
+
+        return allocPlan;
     }
 }

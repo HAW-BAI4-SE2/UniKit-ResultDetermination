@@ -62,7 +62,6 @@ public final class DatabaseController {
         teamInvitationManager = internalDatabaseManager.getTeamInvitationManager();
         teamManager = internalDatabaseManager.getTeamManager();
         teamRegistrationManager = internalDatabaseManager.getTeamRegistrationManager();
-
 //        Logger.info("Application initialized!");
     }
 

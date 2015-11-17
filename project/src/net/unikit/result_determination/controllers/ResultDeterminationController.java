@@ -28,7 +28,8 @@ public class ResultDeterminationController{
 
     public ResultDeterminationController() throws IOException {
         global = new DatabaseController();
-        registrationReader = new RegistrationReaderImpl(global.getCourseRegistrationManager(),global.getTeamRegistrationManager());
+        registrationReader = new RegistrationReaderImpl(global.getCourseRegistrationManager(),global.getTeamRegistrationManager(),
+                global.getStudentManager());
     }
 
     /**
