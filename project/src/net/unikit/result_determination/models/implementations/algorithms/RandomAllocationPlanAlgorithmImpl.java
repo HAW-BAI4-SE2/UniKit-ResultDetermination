@@ -1,7 +1,6 @@
 package net.unikit.result_determination.models.implementations.algorithms;
 
 import net.unikit.database.external.interfaces.Course;
-import net.unikit.result_determination.models.implementations.AllocationPlanImpl;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
 import net.unikit.result_determination.models.interfaces.AllocationPlanAlgorithm;
@@ -20,8 +19,11 @@ public class RandomAllocationPlanAlgorithmImpl implements AllocationPlanAlgorith
     }
 
     @Override
+    /**
+     * TODO
+     */
     public AllocationPlan calculateAllocationPlan(List<Course> courses) {
-        AllocationPlan allocPlan = new AllocationPlanImpl();
+        AllocationPlan allocPlan = null;
 
         for(Course c : courses){
 

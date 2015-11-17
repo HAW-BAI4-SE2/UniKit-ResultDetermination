@@ -22,14 +22,12 @@ import java.util.List;
  */
 public class ResultDeterminationController{
 
-    private DatabaseController dbController; // Für die Datenbankzugriffe
-
     /**
      * Initializes the Object
      * @throws IOException
      */
-    public ResultDeterminationController() throws IOException {
-        dbController = new DatabaseController();
+    public ResultDeterminationController(){
+        // TODO brauch ich hier noch was?
     }
 
     /**
@@ -41,7 +39,7 @@ public class ResultDeterminationController{
     public AllocationPlan createAllocationPlan(AlgorithmSettings algorithmSettings){
 
         /*  All courses for which the allocations shall be created  */
-        List<Course> courses = dbController.getCourseManager().getAllCourses();
+        List<Course> courses = null; // TODO Thomas Libary-Funktion ausführen
 
         /* The Algorithm that does the work */
         AllocationPlanAlgorithm allocPlanAlgorithm = new RandomAllocationPlanAlgorithmImpl(algorithmSettings);
