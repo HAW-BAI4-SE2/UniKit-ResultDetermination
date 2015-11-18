@@ -1,6 +1,7 @@
 package net.unikit.result_determination;
 
 import net.unikit.result_determination.controllers.ResultDeterminationController;
+import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 
 import java.io.IOException;
 
@@ -12,9 +13,22 @@ public class Main {
 
         System.out.println("********* Start Programm *********");
         try {
-            new ResultDeterminationController();
+            ResultDeterminationController resController = new ResultDeterminationController();
+
+
+            AlgorithmSettings settings = new AlgorithmSettings() {
+                @Override
+                public int hashCode() {
+                    return super.hashCode();
+                }
+            };
+
+            resController.createAllocationPlan(settings);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        System.out.println("********* Quit Programm *********");
     }
 }
