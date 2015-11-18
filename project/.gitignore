@@ -13,6 +13,7 @@ dist
 /.classpath
 /.project
 conf
+javadoc
 /RUNNING_PID
 /.settings
 

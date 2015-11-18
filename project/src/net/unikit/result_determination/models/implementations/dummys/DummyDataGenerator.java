@@ -1,6 +1,7 @@
 package net.unikit.result_determination.models.implementations.dummys;
 
-import net.unikit.result_determination.models.interfaces.Course;
+
+import net.unikit.database.interfaces.entities.Course;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +14,15 @@ public class DummyDataGenerator {
     List<Course> courses;
 
     public DummyDataGenerator(){
-        generateTestData();
+
     }
 
-    private void generateTestData(){
+    public void generateTestData(){
         courses = new ArrayList<>();
     }
 
+    public List<Course> getDummyCourses(){
+        return courses;
+    }
 
 }

@@ -1,8 +1,7 @@
 package net.unikit.result_determination.models.implementations.dummys;
 
-import net.unikit.database.external.interfaces.CourseGroup;
-import net.unikit.database.external.interfaces.FieldOfStudy;
-import net.unikit.result_determination.models.interfaces.Course;
+import net.unikit.database.interfaces.entities.*;
+import net.unikit.database.interfaces.ids.CourseId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,35 +34,98 @@ public class CourseDummy implements Course{
         this.groups = new ArrayList<>();
     }
 
-    public Integer getId() {
-        return id;
+    @Override
+    public CourseId getId() {
+        return null;
     }
 
+    @Override
     public String getName() {
-        return name;
+        return null;
     }
 
+    @Override
+    public void setName(String s) {
+
+    }
+
+    @Override
     public String getAbbreviation() {
-        return abbreviation;
+        return null;
     }
 
-    public List<CourseGroup> getCourseGroups() {
-        return groups;
+    @Override
+    public void setAbbreviation(String s) {
+
     }
 
-    public List<FieldOfStudy> getFieldOfStudies() {
-        return fieldOfStudies;
-    }
-
+    @Override
     public Integer getSemester() {
-        return semester;
+        return null;
     }
 
+    @Override
+    public void setSemester(Integer integer) {
+
+    }
+
+    @Override
     public int getMinTeamSize() {
-        return minTeamSize;
+        return 0;
     }
 
+    @Override
+    public void setMinTeamSize(int i) {
+
+    }
+
+    @Override
     public int getMaxTeamSize() {
-        return maxTeamSize;
+        return 0;
+    }
+
+    @Override
+    public void setMaxTeamSize(int i) {
+
+    }
+
+    @Override
+    public List<CourseGroup> getCourseGroups() {
+        return null;
+    }
+
+    @Override
+    public void setCourseGroups(List<CourseGroup> list) {
+
+    }
+
+    @Override
+    public List<FieldOfStudy> getFieldOfStudies() {
+        return null;
+    }
+
+    @Override
+    public void setFieldOfStudies(List<FieldOfStudy> list) {
+
+    }
+
+    @Override
+    public List<CourseRegistration> getSingleRegistrations() {
+        return null;
+    }
+
+    @Override
+    public void setCourseRegistrations(List<CourseRegistration> list) {
+
+    }
+
+    @Override
+    public List<Team> getTeams() {
+        return null;
+    }
+
+    @Override
+    public void setTeams(List<Team> list) {
+
     }
 }

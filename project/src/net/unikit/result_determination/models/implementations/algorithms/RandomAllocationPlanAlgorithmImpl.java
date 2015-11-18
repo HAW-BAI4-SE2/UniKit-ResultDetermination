@@ -1,6 +1,6 @@
 package net.unikit.result_determination.models.implementations.algorithms;
 
-import net.unikit.database.external.interfaces.Course;
+import net.unikit.database.interfaces.entities.Course;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
 import net.unikit.result_determination.models.interfaces.AllocationPlanAlgorithm;

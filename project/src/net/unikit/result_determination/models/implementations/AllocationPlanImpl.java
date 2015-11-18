@@ -1,7 +1,7 @@
 package net.unikit.result_determination.models.implementations;
 
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
-import net.unikit.result_determination.models.interfaces.Course;
+import net.unikit.database.interfaces.entities.Course;
 
 import java.io.File;
 import java.util.List;

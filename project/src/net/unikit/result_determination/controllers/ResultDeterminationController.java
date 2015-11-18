@@ -1,13 +1,20 @@
 package net.unikit.result_determination.controllers;
 
-import net.unikit.database.external.interfaces.Course;
+import net.unikit.database.implementations.DatabaseConfigurationUtils;
+import net.unikit.database.implementations.DatabaseManagerFactory;
+import net.unikit.database.interfaces.DatabaseConfiguration;
+import net.unikit.database.interfaces.DatabaseManager;
+import net.unikit.database.interfaces.entities.Course;
 import net.unikit.result_determination.models.implementations.algorithms.RandomAllocationPlanAlgorithmImpl;
+import net.unikit.result_determination.models.implementations.dummys.DummyDataGenerator;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
 import net.unikit.result_determination.models.interfaces.AllocationPlanAlgorithm;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Created by Jones on 15.11.2015.
@@ -21,13 +28,17 @@ import java.util.List;
  * To create an AllocationPlan just use the controllers method.
  */
 public class ResultDeterminationController{
+    private DatabaseManager dbmanager;
+    private DummyDataGenerator dummyDataGenerator;
 
     /**
      * Initializes the Object
      * @throws IOException
      */
-    public ResultDeterminationController(){
-        // TODO brauch ich hier noch was?
+    public ResultDeterminationController() throws IOException {
+        initDatabaseManager();
+        dummyDataGenerator = new DummyDataGenerator();
+        dummyDataGenerator.generateTestData();
     }
 
     /**
@@ -39,7 +50,8 @@ public class ResultDeterminationController{
     public AllocationPlan createAllocationPlan(AlgorithmSettings algorithmSettings){
 
         /*  All courses for which the allocations shall be created  */
-        List<Course> courses = null; // TODO Thomas Libary-Funktion ausführen
+        //List<Course> courses = dbmanager.getCourseManager().getAllEntities(); --> wird später verwendet!!! Erstmal nur mit Dummys arbeiten!
+        List<Course> courses = dummyDataGenerator.getDummyCourses();
 
         /* The Algorithm that does the work */
         AllocationPlanAlgorithm allocPlanAlgorithm = new RandomAllocationPlanAlgorithmImpl(algorithmSettings);
@@ -48,5 +60,27 @@ public class ResultDeterminationController{
         AllocationPlan allocPlan = allocPlanAlgorithm.calculateAllocationPlan(courses);
 
         return allocPlan;
+    }
+
+    /*
+     * Initializes the DatabaseManager for gaining acess to the Database
+     */
+    private void initDatabaseManager() throws IOException {
+        Properties prop = new Properties();
+        DatabaseConfiguration dbConfigExtern = null;
+        InputStream inputStream = getClass().getResourceAsStream("/database_external.properties");
+        prop.load(inputStream);
+
+        dbConfigExtern = DatabaseConfigurationUtils.createDatabaseConfiguration(prop);
+
+        prop = new Properties();
+        DatabaseConfiguration dbConfigIntern = null;
+        inputStream = getClass().getResourceAsStream("/database_internal.properties");
+        prop.load(inputStream);
+
+        dbConfigIntern = DatabaseConfigurationUtils.createDatabaseConfiguration(prop);
+
+        DatabaseManagerFactory dbManagerFactory = new DatabaseManagerFactory();
+        dbmanager = dbManagerFactory.createDatabaseManager(dbConfigIntern, dbConfigExtern);
     }
 }
