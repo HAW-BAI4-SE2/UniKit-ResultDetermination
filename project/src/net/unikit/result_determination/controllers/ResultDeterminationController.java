@@ -5,6 +5,7 @@ import net.unikit.database.implementations.DatabaseManagerFactory;
 import net.unikit.database.interfaces.DatabaseConfiguration;
 import net.unikit.database.interfaces.DatabaseManager;
 import net.unikit.database.interfaces.entities.Course;
+import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
 import net.unikit.result_determination.models.implementations.algorithms.RandomAllocationPlanAlgorithmImpl;
 import net.unikit.result_determination.models.implementations.dummys.DummyDataGenerator;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
@@ -46,7 +47,7 @@ public class ResultDeterminationController{
      * @return the AllocationPlan
      * @ensure Every student will be assigned to a courseGroup. It could be possible that some teams have to be splitted to ensure that.
      */
-    public AllocationPlan createAllocationPlan(AlgorithmSettings algorithmSettings){
+    public AllocationPlan createAllocationPlan(AlgorithmSettings algorithmSettings) throws NotEnoughCourseGroupsException {
 
         /*  All courses for which the allocations shall be created  */
         //List<Course> courses = dbmanager.getCourseManager().getAllEntities(); --> wird später verwendet!!! Erstmal nur mit Dummys arbeiten!

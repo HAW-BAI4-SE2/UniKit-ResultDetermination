@@ -1,6 +1,7 @@
 package net.unikit.result_determination;
 
 import net.unikit.result_determination.controllers.ResultDeterminationController;
+import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 
 import java.io.IOException;
@@ -23,7 +24,11 @@ public class Main {
                 }
             };
 
-            resController.createAllocationPlan(settings);
+            try {
+                resController.createAllocationPlan(settings);
+            } catch (NotEnoughCourseGroupsException e) {
+                e.printStackTrace();
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

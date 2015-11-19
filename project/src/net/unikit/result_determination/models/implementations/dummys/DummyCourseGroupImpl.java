@@ -3,8 +3,9 @@ package net.unikit.result_determination.models.implementations.dummys;
 import net.unikit.database.interfaces.entities.Appointment;
 import net.unikit.database.interfaces.entities.Course;
 import net.unikit.database.interfaces.entities.CourseGroup;
-import net.unikit.database.interfaces.entities.Student;
+import net.unikit.database.interfaces.entities.CourseRegistration;
 import net.unikit.database.interfaces.ids.CourseGroupId;
+import net.unikit.result_determination.models.exceptions.CourseGroupFullException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ public class DummyCourseGroupImpl implements CourseGroup {
 
     Course course;
     List<Appointment> appointments;
-    List<Student> groupMembers;
+    List<CourseRegistration> groupMembers;
     int groupNumber;
     int maxGroupSize;
 
@@ -28,12 +29,24 @@ public class DummyCourseGroupImpl implements CourseGroup {
         groupMembers = new ArrayList<>();
     }
 
-    public void addStudent(Student s){
-        groupMembers.add(s);
+    public String toString(){
+        return course.getName()+" Gruppe:"+groupNumber;
+    }
+    public void addCourseRegistration(CourseRegistration courseReg) throws CourseGroupFullException {
+        if(!isFull()){
+            groupMembers.add(courseReg);
+        }
+        else {
+            throw new CourseGroupFullException();
+        }
     }
 
-    public List<Student> getGroupMembers(){
+    public List<CourseRegistration> getGroupMembers(){
         return groupMembers;
+    }
+
+    public boolean isFull(){
+        return (groupMembers.size() >= maxGroupSize);
     }
 
     @Override

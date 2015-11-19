@@ -1,8 +1,12 @@
 package net.unikit.result_determination.tests;
 
 import net.unikit.database.interfaces.entities.Course;
+import net.unikit.database.interfaces.entities.CourseGroup;
+import net.unikit.database.interfaces.entities.CourseRegistration;
+import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
 import net.unikit.result_determination.models.implementations.AlgorithmSettingsImpl;
 import net.unikit.result_determination.models.implementations.algorithms.RandomAllocationPlanAlgorithmImpl;
+import net.unikit.result_determination.models.implementations.dummys.DummyCourseGroupImpl;
 import net.unikit.result_determination.models.implementations.dummys.DummyDataGenerator;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
@@ -10,6 +14,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
+
+import static junit.framework.Assert.*;
 
 /**
  * Created by abq307 on 18.11.2015.
@@ -25,7 +31,7 @@ public class RandomAllocationPlanAlgorithmImplTest {
     }
 
     @Test
-    public void testCalculateAllocationPlan() throws Exception {
+    public void testCalculateAllocationPlan(){
         AlgorithmSettings settings = new AlgorithmSettingsImpl();
 
         /*  All courses for which the allocations shall be created  */
@@ -36,8 +42,14 @@ public class RandomAllocationPlanAlgorithmImplTest {
         RandomAllocationPlanAlgorithmImpl allocPlanAlgorithm = new RandomAllocationPlanAlgorithmImpl(settings);
 
         // *************************** start *************************************
-        AllocationPlan allocPlan = allocPlanAlgorithm.calculateAllocationPlan(courses);
+        try {
+            AllocationPlan allocPlan = allocPlanAlgorithm.calculateAllocationPlan(courses);
+        } catch (NotEnoughCourseGroupsException e) {
+            System.err.println("NotEnoughCourseGroups");
+        }
 
+
+        System.out.println("Liste aller Studenten, die nicht verarbeitet werden konnten: "+allocPlanAlgorithm.getNotMatchable());
         /*
          * Wir müssen für jeden AllocationPlan folgendes garantieren:
          *
@@ -45,7 +57,30 @@ public class RandomAllocationPlanAlgorithmImplTest {
          * 2. Ein Student darf nicht in mehreren Praktikumsgruppen der selben Veranstaltung sein
          *
          */
-//        for(Course course :)
+        for(Course course : courses){
+            for(CourseRegistration singleReg : course.getSingleRegistrations()){
+                assertTrue(isPartOfCourseGroup(course, singleReg));
+            }
+        }
 //        assertTrue(!allocPlanAlgorithm.getNotMatchable().isEmpty());
+    }
+
+    /*
+     * Prüft nur, ob ein Student irgendeiner Gruppe zugeordnet wurde.
+     * Ob er in mehreren Gruppen derselben Veranstaltung ist wird hier nicht geprüft.
+     */
+    private boolean isPartOfCourseGroup(Course c,CourseRegistration cReg){
+        boolean isPartOfOneCourseGroup=false;
+        List<CourseGroup> groups = c.getCourseGroups();
+        for(CourseGroup group : groups){
+            // Wenn die CourseRegistration noch nicht gefunden wurde und die CourseRegistration in der aktuellen Gruppe registriert wurde
+            if(((DummyCourseGroupImpl)group).getGroupMembers().contains(cReg)){
+                isPartOfOneCourseGroup=true;
+                break;
+            }
+        }
+
+
+        return isPartOfOneCourseGroup;
     }
 }

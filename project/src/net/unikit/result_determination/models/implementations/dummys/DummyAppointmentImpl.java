@@ -45,6 +45,10 @@ public class DummyAppointmentImpl implements Appointment {
         return result;
     }
 
+    public String toString(){
+        return "Appointment: Start=" + startDate.toString()+" End:"+endDate.toString();
+    }
+
     @Override
     public AppointmentId getId() {
         throw new UnsupportedOperationException();

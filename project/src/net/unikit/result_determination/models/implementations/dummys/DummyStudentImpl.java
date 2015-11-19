@@ -15,6 +15,27 @@ public class DummyStudentImpl implements Student {
 
     StudentNumber s;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DummyStudentImpl that = (DummyStudentImpl) o;
+
+        return !(s != null ? !s.equals(that.s) : that.s != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return s != null ? s.hashCode() : 0;
+    }
+
+    @Override
+    public String toString(){
+        return "Student:"+s.getValue();
+    }
+
     public DummyStudentImpl(StudentNumber s){
         this.s = s;
     }

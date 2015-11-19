@@ -1,6 +1,7 @@
 package net.unikit.result_determination.models.interfaces;
 
 import net.unikit.database.interfaces.entities.Course;
+import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
 
 import java.util.List;
 
@@ -17,5 +18,5 @@ public interface AllocationPlanAlgorithm {
      * @param courses the courses, for which the allocations will be created
      * @return the AllocationPlan
      */
-    public AllocationPlan calculateAllocationPlan(List<Course> courses);
+    public AllocationPlan calculateAllocationPlan(List<Course> courses) throws NotEnoughCourseGroupsException;
 }

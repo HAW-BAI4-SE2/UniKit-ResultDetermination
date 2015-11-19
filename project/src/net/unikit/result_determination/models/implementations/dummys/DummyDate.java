@@ -37,6 +37,9 @@ public class DummyDate {
         return result;
     }
 
+    public String toString(){
+        return "KW"+kalenderWoche+" Day:" + wochenTag + " Time:"+uhrzeit;
+    }
     public String getWochenTag() {
         return wochenTag;
     }

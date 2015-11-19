@@ -27,6 +27,31 @@ public class DummyCourseImpl implements Course{
     private List<CourseRegistration> singleRegistrations;
     private List<Team> teamsRegistrations;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DummyCourseImpl that = (DummyCourseImpl) o;
+
+        if (minTeamSize != that.minTeamSize) return false;
+        if (maxTeamSize != that.maxTeamSize) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (abbreviation != null ? !abbreviation.equals(that.abbreviation) : that.abbreviation != null) return false;
+        return !(semester != null ? !semester.equals(that.semester) : that.semester != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (abbreviation != null ? abbreviation.hashCode() : 0);
+        result = 31 * result + (semester != null ? semester.hashCode() : 0);
+        result = 31 * result + minTeamSize;
+        result = 31 * result + maxTeamSize;
+        return result;
+    }
+
     public DummyCourseImpl(CourseId id, String name, String abbreviation, Integer semester, int minTeamSize, int maxTeamSize, List<FieldOfStudy> fieldOfStudies,
                            List<CourseGroup> courseGroups, List<CourseRegistration> singleRegistrations, List<Team> teamsRegistrations){
         this.id = id;

@@ -120,8 +120,8 @@ public class DummyDataGenerator {
         lb03Appointments.add(dummyAppointmentMap.get("KW56_Montag_Früh"));
 
         CourseGroup lb01 = new DummyCourseGroupImpl(lb,lb01Appointments,1,maxGroupSize);
-        CourseGroup lb02 = new DummyCourseGroupImpl(lb,lb02Appointments,1,maxGroupSize);
-        CourseGroup lb03 = new DummyCourseGroupImpl(lb,lb03Appointments,1,maxGroupSize);
+        CourseGroup lb02 = new DummyCourseGroupImpl(lb,lb02Appointments,2,maxGroupSize);
+        CourseGroup lb03 = new DummyCourseGroupImpl(lb,lb03Appointments,3,maxGroupSize);
 
         lbGroups.add(lb01);
         lbGroups.add(lb02);
@@ -153,13 +153,15 @@ public class DummyDataGenerator {
         rmpp3Appointments.add(dummyAppointmentMap.get("KW55_Montag_Früh"));
 
         CourseGroup rmpp1 = new DummyCourseGroupImpl(rmp,rmpp1Appointments,1,maxGroupSize);
-        CourseGroup rmpp2 = new DummyCourseGroupImpl(rmp,rmpp2Appointments,1,maxGroupSize);
-        CourseGroup rmpp3 = new DummyCourseGroupImpl(rmp,rmpp3Appointments,1,maxGroupSize);
+        CourseGroup rmpp2 = new DummyCourseGroupImpl(rmp,rmpp2Appointments,2,maxGroupSize);
+        CourseGroup rmpp3 = new DummyCourseGroupImpl(rmp,rmpp3Appointments,3,maxGroupSize);
 
         rmpGroups.add(rmpp1);
         rmpGroups.add(rmpp2);
         rmpGroups.add(rmpp3);
 
+        lb.setCourseGroups(lbGroups);
+        rmp.setCourseGroups(rmpGroups);
 
         courses.add(lb);
         courses.add(rmp);
@@ -175,5 +177,4 @@ public class DummyDataGenerator {
             c.setCourseRegistrations(singleRegistrations);
         }
     }
-
 }

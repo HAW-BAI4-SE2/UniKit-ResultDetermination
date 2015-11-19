@@ -21,6 +21,30 @@ public class DummyCourseRegistrationImpl implements CourseRegistration {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DummyCourseRegistrationImpl that = (DummyCourseRegistrationImpl) o;
+
+        if (s != null ? !s.equals(that.s) : that.s != null) return false;
+        return !(c != null ? !c.equals(that.c) : that.c != null);
+
+    }
+
+    @Override
+    public String toString(){
+        return this.s.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        int result = s != null ? s.hashCode() : 0;
+        result = 31 * result + (c != null ? c.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public CourseRegistrationId getId() {
         throw new UnsupportedOperationException();
     }
