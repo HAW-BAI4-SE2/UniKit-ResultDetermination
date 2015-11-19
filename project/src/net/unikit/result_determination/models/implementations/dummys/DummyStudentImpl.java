@@ -1,9 +1,6 @@
 package net.unikit.result_determination.models.implementations.dummys;
 
-import net.unikit.database.interfaces.entities.Course;
-import net.unikit.database.interfaces.entities.FieldOfStudy;
-import net.unikit.database.interfaces.entities.Student;
-import net.unikit.database.interfaces.entities.Team;
+import net.unikit.database.interfaces.entities.*;
 import net.unikit.database.interfaces.ids.StudentNumber;
 
 import java.util.List;
@@ -106,26 +103,46 @@ public class DummyStudentImpl implements Student {
     }
 
     @Override
+    public List<CourseRegistration> getCourseRegistrations() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<MembershipRequest> getMembershipRequests() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<TeamInvitation> getTeamInvitations() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<TeamRegistration> getTeamRegistrations() {
+        throw new UnsupportedOperationException();
+    }
+
+
     public void setCompletedCourses(List<Course> list) {
         throw new UnsupportedOperationException();
     }
 
-    @Override
+
     public List<Course> getRegisteredCourses() {
         throw new UnsupportedOperationException();
     }
 
-    @Override
+
     public void setRegisteredCourses(List<Course> list) {
         throw new UnsupportedOperationException();
     }
 
-    @Override
+
     public List<Team> getRegisteredTeams() {
         throw new UnsupportedOperationException();
     }
 
-    @Override
+
     public void setRegisteredTeams(List<Team> list) {
         throw new UnsupportedOperationException();
     }

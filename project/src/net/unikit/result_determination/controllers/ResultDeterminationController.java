@@ -51,7 +51,7 @@ public class ResultDeterminationController{
 
         /*  All courses for which the allocations shall be created  */
         //List<Course> courses = dbmanager.getCourseManager().getAllEntities(); --> wird später verwendet!!! Erstmal nur mit Dummys arbeiten!
-        List<Course> courses = dummyDataGenerator.getDummyCourses();
+        List<Course> courses = (List<Course>)((List<?>) dummyDataGenerator.getDummyCourses());
 
         /* The Algorithm that does the work */
         AllocationPlanAlgorithm allocPlanAlgorithm = new RandomAllocationPlanAlgorithmImpl(algorithmSettings);

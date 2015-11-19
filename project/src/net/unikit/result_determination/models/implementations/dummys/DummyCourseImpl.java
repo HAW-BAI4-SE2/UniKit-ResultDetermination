@@ -148,11 +148,20 @@ public class DummyCourseImpl implements Course{
     }
 
     @Override
+    public CourseLecture getCourseLecture() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setCourseLecture(CourseLecture courseLecture) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public List<CourseGroup> getCourseGroups() {
         return courseGroups;
     }
 
-    @Override
     public void setCourseGroups(List<CourseGroup> courseGroups) {
         this.courseGroups = courseGroups;
     }
@@ -162,7 +171,6 @@ public class DummyCourseImpl implements Course{
         return fieldOfStudies;
     }
 
-    @Override
     public void setFieldOfStudies(List<FieldOfStudy> fieldOfStudies) {
         this.fieldOfStudies = fieldOfStudies;
     }
@@ -173,6 +181,10 @@ public class DummyCourseImpl implements Course{
     }
 
     @Override
+    public List<CourseRegistration> getAllCourseRegistrations() {
+        throw new UnsupportedOperationException();
+    }
+
     public void setCourseRegistrations(List<CourseRegistration> singleRegistrations) {
         this.singleRegistrations = singleRegistrations;
     }
@@ -182,7 +194,6 @@ public class DummyCourseImpl implements Course{
         return teamsRegistrations;
     }
 
-    @Override
     public void setTeams(List<Team> teamsRegistrations) {
         this.teamsRegistrations = teamsRegistrations;
     }

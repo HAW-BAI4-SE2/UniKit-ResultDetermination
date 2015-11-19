@@ -1,6 +1,7 @@
 package net.unikit.result_determination.models.implementations.dummys;
 
 import net.unikit.database.interfaces.entities.Appointment;
+import net.unikit.database.interfaces.entities.DidacticUnit;
 import net.unikit.database.interfaces.ids.AppointmentId;
 
 import java.util.Date;
@@ -51,6 +52,16 @@ public class DummyAppointmentImpl implements Appointment {
 
     @Override
     public AppointmentId getId() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public DidacticUnit getDidacticUnit() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setDidacticUnit(DidacticUnit didacticUnit) {
         throw new UnsupportedOperationException();
     }
 

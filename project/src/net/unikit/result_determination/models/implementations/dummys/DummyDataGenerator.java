@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class DummyDataGenerator {
 
-    List<Course> courses;
+    List<DummyCourseImpl> courses;
     List<Student> students;
     List<CourseRegistration> courseRegistrations;
     List<Team> teams;
@@ -44,7 +44,7 @@ public class DummyDataGenerator {
         registrateAllStudentsAsSingleRegistration();
     }
 
-    public List<Course> getDummyCourses(){
+    public List<DummyCourseImpl> getDummyCourses(){
         return courses;
     }
 
@@ -93,7 +93,7 @@ public class DummyDataGenerator {
      */
     private void generateCourses(int maxGroupSize){
         // LB -> immer Montag_Früh
-        Course lb = new DummyCourseImpl("Logik und Berechenbarkeit",2,1,2); // DummyCourseImpl(String name, Integer semester, int min, int max)
+        DummyCourseImpl lb = new DummyCourseImpl("Logik und Berechenbarkeit",2,1,2); // DummyCourseImpl(String name, Integer semester, int min, int max)
         List<CourseGroup> lbGroups = new ArrayList<>();
 
         // LBP/01 -> 43,46,49,54
@@ -128,7 +128,7 @@ public class DummyDataGenerator {
 //      ****************************************************************************************************************
 
         // RMP
-        Course rmp = new DummyCourseImpl("Rechner und Maschinennahe Programmierung",2,1,2);
+        DummyCourseImpl rmp = new DummyCourseImpl("Rechner und Maschinennahe Programmierung",2,1,2);
         List<CourseGroup> rmpGroups = new ArrayList<>();
         // RMPP/01 -> 45,48,51,56
         List<Appointment> rmpp1Appointments = new ArrayList<>();
@@ -167,7 +167,7 @@ public class DummyDataGenerator {
 
     private void registrateAllStudentsAsSingleRegistration(){
 
-        for(Course c : courses){
+        for(DummyCourseImpl c : courses){
             List<CourseRegistration> singleRegistrations = c.getSingleRegistrations();
             for (Student s : students){
                 singleRegistrations.add(new DummyCourseRegistrationImpl(s,c));

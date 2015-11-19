@@ -69,7 +69,6 @@ public class DummyCourseGroupImpl implements CourseGroup {
         return appointments;
     }
 
-    @Override
     public void setAppointments(List<Appointment> list) {
         throw new UnsupportedOperationException();
     }
