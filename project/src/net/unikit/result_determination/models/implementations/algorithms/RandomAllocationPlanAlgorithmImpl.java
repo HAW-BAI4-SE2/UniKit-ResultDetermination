@@ -36,7 +36,7 @@ public class RandomAllocationPlanAlgorithmImpl implements AllocationPlanAlgorith
     @Override
     /**
      * TODO the algorithm ignores TeamRegistrations at this moment
-     *
+     * TODO Zurzeit ist der Algorithmus auch noch nicht Random -> es wird noch nichts geshufflet (könnte man ganz am Anfang einmal machen)
      * Algorithm Idea:
      *
      * For every Course
@@ -159,7 +159,7 @@ public class RandomAllocationPlanAlgorithmImpl implements AllocationPlanAlgorith
     public boolean conflict(CourseGroup c1, CourseGroup c2){
         for(Appointment c1App : c1.getAppointments()){
             for(Appointment c2App : c2.getAppointments()){
-                if(c1App.equals(c2App)){
+                if(c1App.equals(c2App)){ // TODO Möglicherweise ein eigenes conflict für zwei Appointments
                     return true;
                 }
             }

@@ -23,7 +23,7 @@ public class DummyDataGenerator {
      * Initializes the Object
      * @param numberStudents The number of students that shall be generated
      */
-    public DummyDataGenerator(int numberStudents){
+    public DummyDataGenerator(int numberStudents, int maxGroupSize){
         courses = new ArrayList<>();
         courseRegistrations = new ArrayList<>();
         teams = new ArrayList<>();
@@ -40,7 +40,7 @@ public class DummyDataGenerator {
          */
         generateAppointments();
         generateStudents(numberStudents);
-        generateCourses();
+        generateCourses(maxGroupSize);
         registrateAllStudentsAsSingleRegistration();
     }
 
@@ -72,7 +72,7 @@ public class DummyDataGenerator {
             startDate = new DummyDate(i+"","Montag","08:15");
             endDate = new DummyDate(i+"","Montag","11:30");
             appointment = new DummyAppointmentImpl(startDate,endDate);
-            dummyAppointmentMap.put("KW"+i+"_Montag_Früh", appointment);
+            dummyAppointmentMap.put("KW" + i + "_Montag_Früh", appointment);
         }
     }
 
@@ -91,11 +91,9 @@ public class DummyDataGenerator {
      * Generiert Testdaten für die beiden veranstaltungen LB und RMP
      * Es werden die Termine generiert und die Praktikumsgruppen erstellt.
      */
-    private void generateCourses(){
-        int maxGroupSize = 16;
-
+    private void generateCourses(int maxGroupSize){
         // LB -> immer Montag_Früh
-        Course lb = new DummyCourseImpl("Logik und Berechenbarkeit",2,1,2);
+        Course lb = new DummyCourseImpl("Logik und Berechenbarkeit",2,1,2); // DummyCourseImpl(String name, Integer semester, int min, int max)
         List<CourseGroup> lbGroups = new ArrayList<>();
 
         // LBP/01 -> 43,46,49,54

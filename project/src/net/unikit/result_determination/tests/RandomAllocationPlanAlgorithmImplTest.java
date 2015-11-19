@@ -27,7 +27,7 @@ public class RandomAllocationPlanAlgorithmImplTest {
 
     @Before
     public void setUp() throws Exception {
-        dummyDataGenerator = new DummyDataGenerator(48);
+        dummyDataGenerator = new DummyDataGenerator(48,16);
     }
 
     @Test

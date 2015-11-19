@@ -38,7 +38,7 @@ public class ResultDeterminationController{
      */
     public ResultDeterminationController() throws IOException {
 //        initDatabaseManager(); // TODO zurzeit kam hier noch eine UnsupportedOperationException -> muss Andi noch implementieren
-        dummyDataGenerator = new DummyDataGenerator(48); // 3*16 Studenten. -> Es gibt pro Kurs 3 Gruppen a 16 Studenten
+        dummyDataGenerator = new DummyDataGenerator(48,16); // 3*16 Studenten. -> Es gibt pro Kurs 3 Gruppen a 16 Studenten
     }
 
     /**
