@@ -61,6 +61,7 @@ public class GreedyAllocationPlanAlgorithmImplTest {
          *
          * 1. Jeder Student, der sich angemeldet hat für eine Veranstaltung muss auch einer Praktikumsgruppe zugeordnet sein.
          * 2. Ein Student darf nicht in mehreren Praktikumsgruppen der selben Veranstaltung sein
+         * 3. Es gibt keine Überschneidungen für Gruppen, die im selben Semester stattfinden
          *
          */
         for(Course course : courses){
