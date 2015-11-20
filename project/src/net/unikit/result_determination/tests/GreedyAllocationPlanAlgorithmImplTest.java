@@ -36,7 +36,7 @@ public class GreedyAllocationPlanAlgorithmImplTest {
 
         /*  All courses for which the allocations shall be created  */
         //List<Course> courses = dbmanager.getCourseManager().getAllEntities(); --> wird später verwendet!!! Erstmal nur mit Dummys arbeiten!
-        List<Course> courses = (List<Course>)((List<?>) dummyDataGenerator.getDummyCourses());
+        List<Course> courses = dummyDataGenerator.getDummyCourses();
 
         /* The Algorithm that does the work */
         GreedyAllocationPlanAlgorithmImpl allocPlanAlgorithm = new GreedyAllocationPlanAlgorithmImpl(settings);
