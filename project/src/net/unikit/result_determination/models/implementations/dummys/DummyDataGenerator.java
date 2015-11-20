@@ -13,7 +13,7 @@ import java.util.Map;
  */
 public class DummyDataGenerator {
 
-    List<DummyCourseImpl> courses;
+    List<Course> courses;
     List<Student> students;
     List<CourseRegistration> courseRegistrations;
     List<Team> teams;
@@ -44,7 +44,7 @@ public class DummyDataGenerator {
         registrateAllStudentsAsSingleRegistration();
     }
 
-    public List<DummyCourseImpl> getDummyCourses(){
+    public List<Course> getDummyCourses(){
         return courses;
     }
 
@@ -167,12 +167,12 @@ public class DummyDataGenerator {
 
     private void registrateAllStudentsAsSingleRegistration(){
 
-        for(DummyCourseImpl c : courses){
+        for(Course c : courses){
             List<CourseRegistration> singleRegistrations = c.getSingleRegistrations();
             for (Student s : students){
                 singleRegistrations.add(new DummyCourseRegistrationImpl(s,c));
             }
-            c.setCourseRegistrations(singleRegistrations);
+            ((DummyCourseImpl)c).setCourseRegistrations(singleRegistrations);
         }
     }
 }

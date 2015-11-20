@@ -6,7 +6,7 @@ import net.unikit.database.interfaces.DatabaseConfiguration;
 import net.unikit.database.interfaces.DatabaseManager;
 import net.unikit.database.interfaces.entities.Course;
 import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
-import net.unikit.result_determination.models.implementations.algorithms.RandomAllocationPlanAlgorithmImpl;
+import net.unikit.result_determination.models.implementations.algorithms.GreedyAllocationPlanAlgorithmImpl;
 import net.unikit.result_determination.models.implementations.dummys.DummyDataGenerator;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
@@ -51,10 +51,10 @@ public class ResultDeterminationController{
 
         /*  All courses for which the allocations shall be created  */
         //List<Course> courses = dbmanager.getCourseManager().getAllEntities(); --> wird später verwendet!!! Erstmal nur mit Dummys arbeiten!
-        List<Course> courses = (List<Course>)((List<?>) dummyDataGenerator.getDummyCourses());
+        List<Course> courses = dummyDataGenerator.getDummyCourses();
 
         /* The Algorithm that does the work */
-        AllocationPlanAlgorithm allocPlanAlgorithm = new RandomAllocationPlanAlgorithmImpl(algorithmSettings);
+        AllocationPlanAlgorithm allocPlanAlgorithm = new GreedyAllocationPlanAlgorithmImpl(algorithmSettings);
 
         // *************************** Idee 1 *************************************
         AllocationPlan allocPlan = allocPlanAlgorithm.calculateAllocationPlan(courses);
