@@ -37,12 +37,12 @@ public class AllocationPlanImpl implements AllocationPlan {
             writer.append(delimiter);
             writer.append(CRLF);
             //Go through List of all Courses
-            for (int course = 0; course < courses.size(); course++) {
+            for (Course course : courses) {
                 //Go through List of all Groups of one Course
-                for (int courseGroup = 0; courseGroup < courses.get(course).getCourseGroups().size(); courseGroup++) {
+                for (int courseGroup = 0; courseGroup < course.getCourseGroups().size(); courseGroup++) {
                     writer.append(
                             //add course name
-                            courses.get(course).getName()
+                            course.getName()
                     );
                     //add delimiter
                     writer.append(
@@ -50,31 +50,26 @@ public class AllocationPlanImpl implements AllocationPlan {
                     );
                     //add groupNumber to the List
                     writer.append(
-                           String.valueOf(courses.get(course).getCourseGroups().get(courseGroup).getGroupNumber())
+                           String.valueOf(course.getCourseGroups().get(courseGroup).getGroupNumber())
                     );
                     //add delimiter
                     writer.append(
                             delimiter
                     );
                     //Go through all Students of a courseGroup
-                    for (int student = 0; student < courses.get(course).getCourseGroups().get(courseGroup).getMaxGroupSize(); student++) {
+                    for (int student = 0; student < course.getCourseGroups().get(courseGroup).getMaxGroupSize(); student++) {
                         writer.append(
                                 // add all students of the Group
-    // TO DO List<Student> getStudentsOfTheGroup
-                                courses.get(0).getCourseGroups().get()
-                                courses.get(course).getCourseGroups().get(courseGroup).get(student).getStudentNumber().toString()
+                                 // TO DO List<Student> getStudentsOfTheGroup
+                                course.getCourseGroups().get(courseGroup).get(student).getStudentNumber().toString()
                         );
                         //add delimiter and eol
-                        if (student < courses.get(course).getCourseGroups().get(courseGroup).getMaxGroupSize() - 1) {
+                        if (student < course.getCourseGroups().get(courseGroup).getMaxGroupSize() - 1) {
                             writer.append(delimiterStudents);
                         } else {
                             writer.append(CRLF);
                         }
                     }
-                }
-                //add eol
-                if (course < courses.size() - 1) {
-                    writer.append(CRLF);
                 }
             }
             //makes buffer empty
