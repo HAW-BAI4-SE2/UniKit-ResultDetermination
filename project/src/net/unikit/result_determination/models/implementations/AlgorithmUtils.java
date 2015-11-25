@@ -1,9 +1,9 @@
 package net.unikit.result_determination.models.implementations;
 
 import net.unikit.database.interfaces.entities.*;
-import net.unikit.database.interfaces.entities.Student;
+import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistException;
 import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
-import net.unikit.result_determination.models.implementations.dummys.DummyCourseGroupImpl;
+import net.unikit.result_determination.models.interfaces.AllocationPlan;
 
 import java.util.List;
 import java.util.Map;
@@ -34,9 +34,9 @@ public final class AlgorithmUtils {
      * @param singleRegistration the Registration for which an available CourseGroup shall be found
      * @param course the Course for which the CourseGroup shall be found
      */
-    public static CourseGroup findPossibileCourseGroupFor(CourseRegistration singleRegistration, Course course, Map<Student,List<CourseGroup>> studentsCourseGroups) {
+    public static CourseGroup findPossibileCourseGroupFor(CourseRegistration singleRegistration, Course course, Map<Student,List<CourseGroup>> studentsCourseGroups, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
         for(CourseGroup courseGroup : course.getCourseGroups()){
-            if((!((DummyCourseGroupImpl)courseGroup).isFull()) && !conflict(singleRegistration,courseGroup, studentsCourseGroups)){
+            if(!allocPlan.isCourseGroupFull(courseGroup) && !conflict(singleRegistration,courseGroup, studentsCourseGroups)){
                 return courseGroup;
             }
         }

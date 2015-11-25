@@ -1,11 +1,14 @@
 package net.unikit.result_determination.models.implementations.algorithms;
 
-import net.unikit.database.interfaces.entities.*;
+import net.unikit.database.interfaces.entities.Course;
+import net.unikit.database.interfaces.entities.CourseGroup;
+import net.unikit.database.interfaces.entities.CourseRegistration;
+import net.unikit.database.interfaces.entities.Student;
+import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistException;
 import net.unikit.result_determination.models.exceptions.CourseGroupFullException;
 import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
 import net.unikit.result_determination.models.implementations.AlgorithmUtils;
 import net.unikit.result_determination.models.implementations.AllocationPlanImpl;
-import net.unikit.result_determination.models.implementations.dummys.DummyCourseGroupImpl;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
 import net.unikit.result_determination.models.interfaces.AllocationPlanAlgorithm;
@@ -46,7 +49,7 @@ public class GreedyAllocationPlanAlgorithmImpl implements AllocationPlanAlgorith
      *          else mark the Registration as notMatchable
      */
     public AllocationPlan calculateAllocationPlan(List<Course> courses) throws NotEnoughCourseGroupsException {
-        AllocationPlan allocPlan = null;
+        AllocationPlan allocPlan = new AllocationPlanImpl(courses);
         /*
          * Iterates over every Course
          */
@@ -61,15 +64,22 @@ public class GreedyAllocationPlanAlgorithmImpl implements AllocationPlanAlgorith
              */
             for(CourseRegistration singleRegistration :singleRegistrations){
 
-                CourseGroup possibleCourseGroup = AlgorithmUtils.findPossibileCourseGroupFor(singleRegistration, c, studentsCourseGroups);
+                CourseGroup possibleCourseGroup = null;
+                try {
+                    possibleCourseGroup = AlgorithmUtils.findPossibileCourseGroupFor(singleRegistration, c, studentsCourseGroups, allocPlan);
+                } catch (CourseGroupDoesntExistException e) {
+                    //TODO !!!!!!!
+                }
 
 //                System.out.println("Mögliche CourseGroup:" + possibleCourseGroup);
 
                 // a possibile courseGroup was found
                 if(possibleCourseGroup != null){
                     try {
-                        ((DummyCourseGroupImpl)possibleCourseGroup).addCourseRegistration(singleRegistration);
+                        allocPlan.addCourseRegistration(possibleCourseGroup, singleRegistration);
                     } catch (CourseGroupFullException e) {
+                        e.printStackTrace();
+                    } catch (CourseGroupDoesntExistException e) {
                         e.printStackTrace();
                     }
                     List<CourseGroup> studentsCourseGroups;
@@ -93,7 +103,7 @@ public class GreedyAllocationPlanAlgorithmImpl implements AllocationPlanAlgorith
             }
         }
 
-        allocPlan = new AllocationPlanImpl(courses);
+
         return allocPlan;
     }
 
