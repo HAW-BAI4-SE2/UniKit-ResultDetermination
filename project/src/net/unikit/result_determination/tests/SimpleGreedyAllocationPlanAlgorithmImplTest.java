@@ -6,7 +6,7 @@ import net.unikit.database.interfaces.entities.CourseRegistration;
 import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistException;
 import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
 import net.unikit.result_determination.models.implementations.AlgorithmSettingsImpl;
-import net.unikit.result_determination.models.implementations.algorithms.GreedyAllocationPlanAlgorithmImpl;
+import net.unikit.result_determination.models.implementations.algorithms.SimpleGreedyAllocationPlanAlgorithmImpl;
 import net.unikit.result_determination.models.implementations.dummys.DummyDataGenerator;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
@@ -20,7 +20,7 @@ import static junit.framework.Assert.assertTrue;
 /**
  * Created by abq307 on 18.11.2015.
  */
-public class GreedyAllocationPlanAlgorithmImplTest {
+public class SimpleGreedyAllocationPlanAlgorithmImplTest {
 
 
     DummyDataGenerator dummyDataGenerator;
@@ -39,7 +39,7 @@ public class GreedyAllocationPlanAlgorithmImplTest {
         List<Course> courses = dummyDataGenerator.getDummyCourses();
 
         /* The Algorithm that does the work */
-        GreedyAllocationPlanAlgorithmImpl allocPlanAlgorithm = new GreedyAllocationPlanAlgorithmImpl(settings);
+        SimpleGreedyAllocationPlanAlgorithmImpl allocPlanAlgorithm = new SimpleGreedyAllocationPlanAlgorithmImpl(settings);
         AllocationPlan allocPlan = null;
         // *************************** start *************************************
 

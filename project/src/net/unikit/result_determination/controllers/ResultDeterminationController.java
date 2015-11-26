@@ -7,7 +7,7 @@ import net.unikit.database.interfaces.DatabaseManager;
 import net.unikit.database.interfaces.entities.Course;
 import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistException;
 import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
-import net.unikit.result_determination.models.implementations.algorithms.GreedyAllocationPlanAlgorithmImpl;
+import net.unikit.result_determination.models.implementations.algorithms.SimpleGreedyAllocationPlanAlgorithmImpl;
 import net.unikit.result_determination.models.implementations.dummys.DummyDataGenerator;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
@@ -55,7 +55,7 @@ public class ResultDeterminationController{
         List<Course> courses = dummyDataGenerator.getDummyCourses();
 
         /* The Algorithm that does the work */
-        AllocationPlanAlgorithm allocPlanAlgorithm = new GreedyAllocationPlanAlgorithmImpl(algorithmSettings);
+        AllocationPlanAlgorithm allocPlanAlgorithm = new SimpleGreedyAllocationPlanAlgorithmImpl(algorithmSettings);
 
         // *************************** Idee 1 *************************************
         AllocationPlan allocPlan = allocPlanAlgorithm.calculateAllocationPlan(courses);

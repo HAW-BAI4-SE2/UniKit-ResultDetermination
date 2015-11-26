@@ -14,25 +14,46 @@ import java.util.Map;
 abstract class AbstractAllocationPlanAlgorithm implements AllocationPlanAlgorithm {
 
     protected Map<Student,List<CourseGroup>> studentsCourseGroups;
+    protected Map<CourseRegistration,CourseGroup> conflicts;
 
     public AbstractAllocationPlanAlgorithm(){
         this.studentsCourseGroups = new HashMap<>();
+        this.conflicts = new HashMap<>();
     }
 
     /**
      * Checks, if there are enough available slots to assign each Student to a courseGroup
-     * @param c the Course for which shall be checked if there are enough groups and slots to assign each student
+     * @param courses the courses that shall be checked
      */
-    public void checkAvailableSlots(Course c) throws NotEnoughCourseGroupsException {
-        int availableSlots = 0;
-        int numberRegistrations = c.getSingleRegistrations().size()+c.getTeams().size();
-        for(CourseGroup group : c.getCourseGroups()){
-            availableSlots+=group.getMaxGroupSize();
-        }
+    public void checkAvailableSlots(List<Course> courses) throws NotEnoughCourseGroupsException {
+        for(Course c : courses){
+            int availableSlots = 0;
+            int numberRegistrations = c.getSingleRegistrations().size()+c.getTeams().size();
+            for(CourseGroup group : c.getCourseGroups()){
+                availableSlots+=group.getMaxGroupSize();
+            }
 
-        if(availableSlots < numberRegistrations){
-            throw new NotEnoughCourseGroupsException();
+            if(availableSlots < numberRegistrations){
+                throw new NotEnoughCourseGroupsException();
+            }
         }
+    }
+
+    /**
+     * Checks if two Courses have potential conflicts between CourseGroups and their Appointments
+     * @param c1 the first course
+     * @param c2 the second course
+     * @return True if a conflict appeared
+     */
+    public boolean conflict(Course c1, Course c2){
+        for(CourseGroup c1Group : c1.getCourseGroups()){
+            for(CourseGroup c2Group : c2.getCourseGroups()){
+                if(conflict(c1Group, c2Group)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /*

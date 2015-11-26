@@ -10,26 +10,27 @@ import net.unikit.result_determination.models.implementations.AllocationPlanImpl
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Jones on 15.11.2015.
  * An Implementation for creating allocation plans inspired by Greedy-Algorithms.
  */
-public class GreedyAllocationPlanAlgorithmImpl extends AbstractAllocationPlanAlgorithm {
+public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationPlanAlgorithm {
 
     AlgorithmSettings settings;
     List<CourseRegistration> notMatchable;
+    Map<CourseRegistration,Integer> dangerValues;
+
 
     /**
      * Initializes the object.
      * @param settings The AlgorithmSettings
      */
-    public GreedyAllocationPlanAlgorithmImpl(AlgorithmSettings settings){
+    public SimpleGreedyAllocationPlanAlgorithmImpl(AlgorithmSettings settings){
         this.settings = settings;
         notMatchable = new ArrayList<>();
+        dangerValues = new HashMap<>();
     }
 
     @Override
@@ -48,13 +49,13 @@ public class GreedyAllocationPlanAlgorithmImpl extends AbstractAllocationPlanAlg
      */
     public AllocationPlan calculateAllocationPlan(List<Course> courses) throws NotEnoughCourseGroupsException, CourseGroupDoesntExistException {
         AllocationPlan allocPlan = new AllocationPlanImpl(courses);
+        // Check, if there are enough available slots to assign each Student to a courseGroup
+        checkAvailableSlots(courses);
         /*
          * Iterates over every Course
          */
         for(Course course : courses){
 
-            // Check, if there are enough available slots to assign each Student to a courseGroup
-            checkAvailableSlots(course);
             List<CourseRegistration> singleRegistrations = course.getSingleRegistrations();
             Collections.shuffle(singleRegistrations); // Keinen Studenten bevorzugen
             /*
@@ -102,7 +103,7 @@ public class GreedyAllocationPlanAlgorithmImpl extends AbstractAllocationPlanAlg
      * @param singleRegistration the Registration for which an available CourseGroup shall be found
      * @param course the Course for which the CourseGroup shall be found
      */
-    public CourseGroup findPossibileCourseGroupFor(CourseRegistration singleRegistration, Course course, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
+    private CourseGroup findPossibileCourseGroupFor(CourseRegistration singleRegistration, Course course, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
         for(CourseGroup courseGroup : course.getCourseGroups()){
             if(!allocPlan.isCourseGroupFull(courseGroup) && !conflict(singleRegistration,courseGroup)){
                 return courseGroup;
@@ -113,6 +114,24 @@ public class GreedyAllocationPlanAlgorithmImpl extends AbstractAllocationPlanAlg
     }
 
     /**
+     * Tries to find every potential CourseGroup.
+     * A potential CourseGroup is a CourseGroup that doesn't conflict with other CourseGroups of the Student
+     * Warning! The CourseGroups might be full.
+     * @param singleRegistration
+     * @param course
+     * @return
+     */
+    private List<CourseGroup> findPossibileCourseGroups(CourseRegistration singleRegistration, Course course){
+        List<CourseGroup> groups = new ArrayList<>();
+        for(CourseGroup g : course.getCourseGroups()){
+            if(!conflict(singleRegistration,g)){
+                groups.add(g);
+            }
+        }
+        return groups;
+    }
+
+    /**
      * A List of all CourseRegistrations where no possibile Assignment existed without
      * accepting some conflicts between other CourseGroups.
      * @return all not matchable CourseRegistrations
@@ -120,4 +139,5 @@ public class GreedyAllocationPlanAlgorithmImpl extends AbstractAllocationPlanAlg
     public List<CourseRegistration> getNotMatchable(){
         return notMatchable;
     }
+
 }
