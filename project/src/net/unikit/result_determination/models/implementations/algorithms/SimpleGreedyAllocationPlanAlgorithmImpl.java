@@ -1,34 +1,36 @@
 package net.unikit.result_determination.models.implementations.algorithms;
 
-import net.unikit.database.interfaces.entities.*;
+import net.unikit.database.interfaces.entities.Course;
+import net.unikit.database.interfaces.entities.CourseGroup;
+import net.unikit.database.interfaces.entities.CourseRegistration;
+import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistException;
 import net.unikit.result_determination.models.exceptions.CourseGroupFullException;
 import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
-import net.unikit.result_determination.models.implementations.AlgorithmUtils;
 import net.unikit.result_determination.models.implementations.AllocationPlanImpl;
-import net.unikit.result_determination.models.implementations.dummys.DummyCourseGroupImpl;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
-import net.unikit.result_determination.models.interfaces.AllocationPlanAlgorithm;
 
 import java.util.*;
 
 /**
  * Created by Jones on 15.11.2015.
+ * An Implementation for creating allocation plans inspired by Greedy-Algorithms.
  */
-public class GreedyAllocationPlanAlgorithmImpl implements AllocationPlanAlgorithm {
+public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationPlanAlgorithm {
 
     AlgorithmSettings settings;
-    Map<Student,List<CourseGroup>> studentsCourseGroups;
     List<CourseRegistration> notMatchable;
+    Map<CourseRegistration,Integer> dangerValues;
+
 
     /**
      * Initializes the object.
      * @param settings The AlgorithmSettings
      */
-    public GreedyAllocationPlanAlgorithmImpl(AlgorithmSettings settings){
+    public SimpleGreedyAllocationPlanAlgorithmImpl(AlgorithmSettings settings){
         this.settings = settings;
         notMatchable = new ArrayList<>();
-        studentsCourseGroups = new HashMap<>();
+        dangerValues = new HashMap<>();
     }
 
     @Override
@@ -45,31 +47,32 @@ public class GreedyAllocationPlanAlgorithmImpl implements AllocationPlanAlgorith
      *                 add the Registration to the possibile Group
      *          else mark the Registration as notMatchable
      */
-    public AllocationPlan calculateAllocationPlan(List<Course> courses) throws NotEnoughCourseGroupsException {
-        AllocationPlan allocPlan = null;
+    public AllocationPlan calculateAllocationPlan(List<Course> courses) throws NotEnoughCourseGroupsException, CourseGroupDoesntExistException {
+        AllocationPlan allocPlan = new AllocationPlanImpl(courses);
+        // Check, if there are enough available slots to assign each Student to a courseGroup
+        checkAvailableSlots(courses);
         /*
          * Iterates over every Course
          */
-        for(Course c : courses){
+        for(Course course : courses){
 
-            // Check, if there are enough available slots to assign each Student to a courseGroup
-            AlgorithmUtils.checkAvailableSlots(c);
-            List<CourseRegistration> singleRegistrations = c.getSingleRegistrations();
+            List<CourseRegistration> singleRegistrations = course.getSingleRegistrations();
             Collections.shuffle(singleRegistrations); // Keinen Studenten bevorzugen
             /*
              * At this Moment in the development process the algorithm just focuses on singleRegistrations and ignores the teams.
              */
             for(CourseRegistration singleRegistration :singleRegistrations){
 
-                CourseGroup possibleCourseGroup = AlgorithmUtils.findPossibileCourseGroupFor(singleRegistration, c, studentsCourseGroups);
-
+                CourseGroup possibleCourseGroup = findPossibileCourseGroupFor(singleRegistration, course, allocPlan); // throws CourseGroupDoesntExistException
 //                System.out.println("Mögliche CourseGroup:" + possibleCourseGroup);
 
                 // a possibile courseGroup was found
                 if(possibleCourseGroup != null){
                     try {
-                        ((DummyCourseGroupImpl)possibleCourseGroup).addCourseRegistration(singleRegistration);
+                        allocPlan.addCourseRegistration(possibleCourseGroup, singleRegistration);
                     } catch (CourseGroupFullException e) {
+                        e.printStackTrace();
+                    } catch (CourseGroupDoesntExistException e) {
                         e.printStackTrace();
                     }
                     List<CourseGroup> studentsCourseGroups;
@@ -92,11 +95,41 @@ public class GreedyAllocationPlanAlgorithmImpl implements AllocationPlanAlgorith
                 }
             }
         }
-
-        allocPlan = new AllocationPlanImpl(courses);
         return allocPlan;
     }
 
+    /**
+     * Tries to find a possibile CourseGroup for one CourseRegistration
+     * @param singleRegistration the Registration for which an available CourseGroup shall be found
+     * @param course the Course for which the CourseGroup shall be found
+     */
+    private CourseGroup findPossibileCourseGroupFor(CourseRegistration singleRegistration, Course course, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
+        for(CourseGroup courseGroup : course.getCourseGroups()){
+            if(!allocPlan.isCourseGroupFull(courseGroup) && !conflict(singleRegistration,courseGroup)){
+                return courseGroup;
+            }
+        }
+        System.out.println("Für " + singleRegistration.getStudent() + " und Kurs " + course.getName() + " konnte keine freie Gruppe mehr gefunden werden.");
+        return null;
+    }
+
+    /**
+     * Tries to find every potential CourseGroup.
+     * A potential CourseGroup is a CourseGroup that doesn't conflict with other CourseGroups of the Student
+     * Warning! The CourseGroups might be full.
+     * @param singleRegistration
+     * @param course
+     * @return
+     */
+    private List<CourseGroup> findPossibileCourseGroups(CourseRegistration singleRegistration, Course course){
+        List<CourseGroup> groups = new ArrayList<>();
+        for(CourseGroup g : course.getCourseGroups()){
+            if(!conflict(singleRegistration,g)){
+                groups.add(g);
+            }
+        }
+        return groups;
+    }
 
     /**
      * A List of all CourseRegistrations where no possibile Assignment existed without
@@ -106,4 +139,5 @@ public class GreedyAllocationPlanAlgorithmImpl implements AllocationPlanAlgorith
     public List<CourseRegistration> getNotMatchable(){
         return notMatchable;
     }
+
 }

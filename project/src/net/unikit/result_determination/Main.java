@@ -1,6 +1,7 @@
 package net.unikit.result_determination;
 
 import net.unikit.result_determination.controllers.ResultDeterminationController;
+import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistException;
 import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 
@@ -27,6 +28,8 @@ public class Main {
             try {
                 resController.createAllocationPlan(settings);
             } catch (NotEnoughCourseGroupsException e) {
+                e.printStackTrace();
+            } catch (CourseGroupDoesntExistException e) {
                 e.printStackTrace();
             }
 
