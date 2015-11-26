@@ -82,7 +82,7 @@ public class DummyDataGenerator {
      */
     private void generateStudents(int numberStudents){
         for(int i=0; i<numberStudents;i++){
-            Student s = new DummyStudentImpl(new DummyStudentNumberImpl((i*2000)+""));
+            Student s = new DummyStudentImpl(new DummyStudentNumberImpl(i+1+""));
             students.add(s);
         }
     }
