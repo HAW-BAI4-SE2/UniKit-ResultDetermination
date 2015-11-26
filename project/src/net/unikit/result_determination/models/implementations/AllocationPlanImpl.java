@@ -1,8 +1,6 @@
 package net.unikit.result_determination.models.implementations;
 
-import net.unikit.database.interfaces.entities.Course;
-import net.unikit.database.interfaces.entities.CourseGroup;
-import net.unikit.database.interfaces.entities.CourseRegistration;
+import net.unikit.database.interfaces.entities.*;
 import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistException;
 import net.unikit.result_determination.models.exceptions.CourseGroupFullException;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
@@ -24,10 +22,11 @@ public class AllocationPlanImpl implements AllocationPlan {
     private List<Course> courses;
     private Map<CourseGroup,List<CourseRegistration>> courseGroupRegistrations;
 
+
     private final String CRLF = "\r\n";
+
     private String delimiter = ";";
     private String delimiterStudents = ",";
-
     public AllocationPlanImpl(List<Course> courses){
         this.courses = courses;
         this.courseGroupRegistrations = new HashMap<>();
@@ -133,4 +132,5 @@ public class AllocationPlanImpl implements AllocationPlan {
         }
         else throw new CourseGroupDoesntExistException();
     }
+
 }

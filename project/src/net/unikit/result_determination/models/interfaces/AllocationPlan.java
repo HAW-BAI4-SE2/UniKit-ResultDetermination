@@ -20,4 +20,6 @@ public interface AllocationPlan {
     public boolean isCourseGroupFull(CourseGroup g) throws CourseGroupDoesntExistException;
 
     public List<CourseRegistration> getGroupMembers(CourseGroup group) throws CourseGroupDoesntExistException;
+
+
 }
