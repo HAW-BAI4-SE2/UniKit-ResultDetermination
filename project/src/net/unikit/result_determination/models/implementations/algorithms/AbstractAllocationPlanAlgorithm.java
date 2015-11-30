@@ -30,19 +30,24 @@ abstract class AbstractAllocationPlanAlgorithm implements AllocationPlanAlgorith
      * @param courses the courses that shall be checked
      */
     public void checkAvailableSlots(List<Course> courses) throws NotEnoughCourseGroupsException {
-
+        System.out.println("\n*** Check available slots ***");
         for(Course c : courses){
             int availableSlots = 0;
-            int numberRegistrations = c.getSingleRegistrations().size()+c.getTeams().size();
-            System.out.println("Number of Registrations: " + numberRegistrations);
+            int numberRegistrations = c.getSingleRegistrations().size();
+            for(Team t : c.getTeams()){
+                numberRegistrations+= t.getTeamRegistrations().size();
+            }
+
             for(CourseGroup group : c.getCourseGroups()){
                 availableSlots+=group.getMaxGroupSize();
             }
 
+            System.out.println(c.getName()+ " Registrations: " + numberRegistrations + " Plätze: " + availableSlots);
             if(availableSlots < numberRegistrations){
                 throw new NotEnoughCourseGroupsException();
             }
         }
+        System.out.println("");
     }
 
     /**

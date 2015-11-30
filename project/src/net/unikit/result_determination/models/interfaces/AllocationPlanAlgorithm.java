@@ -7,6 +7,7 @@ import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistE
 import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Jones on 15.11.2015.
@@ -23,7 +24,7 @@ public interface AllocationPlanAlgorithm {
      */
     public AllocationPlan calculateAllocationPlan(List<Course> courses) throws NotEnoughCourseGroupsException, CourseGroupDoesntExistException;
 
-    public List<CourseRegistration> getNotMatchable();
+    public Map<Course,List<CourseRegistration>> getNotMatchable();
 
-    public List<Team> getNotMatchableTeams();
+    public Map<Course,List<Team>> getNotMatchableTeams();
 }

@@ -26,7 +26,7 @@ public class SimpleGreedyAllocationPlanAlgorithmImplTest {
     @Before
     public void setUp() throws Exception {
         dummyDataGenerator = new DummyDataGenerator(18,6);
-        dummyDataGenerator.buildTeamAndRegister();
+        //dummyDataGenerator.buildTeamAndRegister();
     }
 
     @Test
@@ -46,10 +46,11 @@ public class SimpleGreedyAllocationPlanAlgorithmImplTest {
 
 
 
-        System.out.println("Liste aller Studenten, die nicht verarbeitet werden konnten: "+allocPlanAlgorithm.getNotMatchable());
-        System.out.println("Liste aller Teams, die nicht verarbeitet werden konnten: "+allocPlanAlgorithm.getNotMatchableTeams());
 
         for(Course course : courses){
+            System.out.println("\n*** "+course.getName()+" ***");
+            System.out.println("NOT MATCHABLE : "+allocPlanAlgorithm.getNotMatchable().get(course));
+            System.out.println("NOT MATCHABLE TEAMS : "+allocPlanAlgorithm.getNotMatchableTeams().get(course));
             for(CourseGroup courseGroup : course.getCourseGroups()){
                 System.out.println(courseGroup + " Teilnehmer: " + allocPlan.getCourseRegistrations(courseGroup) + allocPlan.getTeamRegistrations(courseGroup));
             }

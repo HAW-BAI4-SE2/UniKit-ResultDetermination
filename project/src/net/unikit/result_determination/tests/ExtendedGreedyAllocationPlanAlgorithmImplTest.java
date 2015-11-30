@@ -46,11 +46,10 @@ public class ExtendedGreedyAllocationPlanAlgorithmImplTest {
 
         allocPlan = allocPlanAlgorithm.calculateAllocationPlan(courses);
 
-
-
-        System.out.println("Liste aller Studenten, die nicht verarbeitet werden konnten: "+allocPlanAlgorithm.getNotMatchable());
-
         for(Course course : courses){
+            System.out.println("\n*** "+course.getName()+" ***");
+            System.out.println("NOT MATCHABLE : "+allocPlanAlgorithm.getNotMatchable().get(course));
+            //System.out.println("NOT MATCHABLE TEAMS : "+allocPlanAlgorithm.getNotMatchableTeams().get(course));
             for(CourseGroup courseGroup : course.getCourseGroups()){
                 System.out.println(courseGroup + " Teilnehmer: " + allocPlan.getCourseRegistrations(courseGroup));
             }

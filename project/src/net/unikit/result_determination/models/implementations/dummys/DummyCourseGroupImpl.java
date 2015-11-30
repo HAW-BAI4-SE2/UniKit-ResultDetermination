@@ -25,7 +25,7 @@ public class DummyCourseGroupImpl implements CourseGroup {
     }
 
     public String toString(){
-        return course.getName()+" Gruppe:"+groupNumber;
+        return course.getAbbreviation()+" Gr:"+groupNumber;
     }
 
     @Override

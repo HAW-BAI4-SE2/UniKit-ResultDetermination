@@ -3,10 +3,7 @@ package net.unikit.result_determination.models.implementations.dummys;
 
 import net.unikit.database.interfaces.entities.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by abq307 on 17.11.2015.
@@ -118,7 +115,7 @@ public class DummyDataGenerator {
 
         // *************************************************************************************************************
         // LB -> immer Montag_Früh
-        DummyCourseImpl lb = new DummyCourseImpl("Logik und Berechenbarkeit",2,1,2); // DummyCourseImpl(String name, Integer semester, int min, int max)
+        DummyCourseImpl lb = new DummyCourseImpl("Logik und Berechenbarkeit","LB",2,1,2); // DummyCourseImpl(String name, Integer semester, int min, int max)
         List<CourseGroup> lbGroups = new ArrayList<>();
         // LBP/01 -> 43,46,49,54
         CourseGroup lb01 = new DummyCourseGroupImpl(lb,zeiteinheitEins_Montagmorgens,1,maxGroupSize);
@@ -134,7 +131,7 @@ public class DummyDataGenerator {
 //      ****************************************************************************************************************
 
         // RMP
-        DummyCourseImpl rmp = new DummyCourseImpl("Rechner und Maschinennahe Programmierung",2,1,2);
+        DummyCourseImpl rmp = new DummyCourseImpl("Rechner und Maschinennahe Programmierung","RMP",2,1,2);
         List<CourseGroup> rmpGroups = new ArrayList<>();
         // RMPP/01 -> 45,48,51,56
         CourseGroup rmpp1 = new DummyCourseGroupImpl(rmp,zeiteinheitDrei_Montagmorgens,1,maxGroupSize);
@@ -151,7 +148,7 @@ public class DummyDataGenerator {
         // *************************************************************************************************************
 
         // DB
-        DummyCourseImpl db = new DummyCourseImpl("Datenbanken",2,1,2);
+        DummyCourseImpl db = new DummyCourseImpl("Datenbanken","DB",2,1,2);
         List<CourseGroup> dbGroups = new ArrayList<>();
         // DBP/01 -> 45,48,51,56
         CourseGroup dbp1 = new DummyCourseGroupImpl(db,zeiteinheitDrei_Montagmorgens,1,maxGroupSize);
@@ -168,7 +165,7 @@ public class DummyDataGenerator {
         // *************************************************************************************************************
 
         // SE
-        DummyCourseImpl se = new DummyCourseImpl("Software Entwicklung",2,1,2);
+        DummyCourseImpl se = new DummyCourseImpl("Software Entwicklung","SE",2,1,2);
         List<CourseGroup> seGroups = new ArrayList<>();
 
         // SEP/01 -> 45,48,51,56
@@ -217,13 +214,15 @@ public class DummyDataGenerator {
         for(Course c : courses){
             System.out.println("\n**** Create Teams for " + c.getName() + ". ****");
             List<Team> teams = new ArrayList<>();
+            List<CourseRegistration> singleRegistrations = c.getSingleRegistrations();
+            Collections.shuffle(singleRegistrations);
 
             for(int i=0; i< c.getSingleRegistrations().size()/c.getMaxTeamSize();i++){
                 Team t = new DummyTeamImpl(c);
                 teams.add(t);
             }
 
-            for(CourseRegistration courseRegistration : c.getSingleRegistrations()){
+            for(CourseRegistration courseRegistration : singleRegistrations){
                 Student s = courseRegistration.getStudent();
                 Team t = findTeam(teams, c.getMaxTeamSize());
                 TeamRegistration teamReg = new DummyTeamRegistration(t,s);

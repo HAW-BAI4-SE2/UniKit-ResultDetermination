@@ -16,8 +16,8 @@ import java.util.*;
 public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationPlanAlgorithm {
 
     AlgorithmSettings settings;
-    List<CourseRegistration> notMatchable;
-    List<Team> notMatchableTeams;
+    Map<Course,List<CourseRegistration>> notMatchable;
+    Map<Course,List<Team>> notMatchableTeams;
     Map<CourseRegistration,Integer> dangerValues;
 
 
@@ -27,8 +27,8 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
      */
     public SimpleGreedyAllocationPlanAlgorithmImpl(AlgorithmSettings settings){
         this.settings = settings;
-        notMatchable = new ArrayList<>();
-        notMatchableTeams = new ArrayList<>();
+        notMatchable = new HashMap<>();
+        notMatchableTeams = new HashMap<>();
         dangerValues = new HashMap<>();
     }
 
@@ -50,13 +50,22 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
         AllocationPlan allocPlan = new AllocationPlanImpl(courses);
         // Check, if there are enough available slots to assign each Student to a courseGroup
         checkAvailableSlots(courses);
+
+        System.out.println("***** START ALGORITHM *****");
+
         /*
          * Iterates over every Course
          */
         for(Course course : courses){
+            // Init "Auffangbehälter"
+            notMatchable.put(course, new ArrayList<>());
+            notMatchableTeams.put(course, new ArrayList<>());
+
             calculateSingleRegistrations(courses, course, allocPlan);
             calculateTeamRegistrations(courses, course, allocPlan);
         }
+
+        System.out.println("***** STOP ALGORITHM *****");
         return allocPlan;
     }
 
@@ -67,15 +76,16 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
         for(Team t : teams){
 
             CourseGroup possibleCourseGroup = findPossibileCourseGroupFor(t, course, allocPlan); // throws CourseGroupDoesntExistException
-//                System.out.println("Mögliche CourseGroup:" + possibleCourseGroup);
 
             // a possibile courseGroup was found
             if(possibleCourseGroup != null){
                 registerTeam(t, possibleCourseGroup, allocPlan);
             }
             else{
-//                    hier wäre auch ein tryToKickOtherRegistration oder sowas denkbar um einen Platz frei zu bekommen
-                notMatchableTeams.add(t);
+                System.out.println("@@@@ FEHLER: " + t + " -> " + course.getName());
+                List<Team> notMatchable = notMatchableTeams.get(course);
+                notMatchable.add(t);
+                notMatchableTeams.put(course,notMatchable);
             }
         }
     }
@@ -83,21 +93,20 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
     private void calculateSingleRegistrations(List<Course> courses, Course course, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
         List<CourseRegistration> singleRegistrations = course.getSingleRegistrations();
         Collections.shuffle(singleRegistrations); // Keinen Studenten bevorzugen
-        /*
-         * At this Moment in the development process the algorithm just focuses on singleRegistrations and ignores the teams.
-         */
+
         for(CourseRegistration singleRegistration :singleRegistrations){
 
             CourseGroup possibleCourseGroup = findPossibileCourseGroupFor(singleRegistration, course, allocPlan); // throws CourseGroupDoesntExistException
-//                System.out.println("Mögliche CourseGroup:" + possibleCourseGroup);
 
             // a possibile courseGroup was found
             if(possibleCourseGroup != null){
                 registerStudent(singleRegistration, possibleCourseGroup, allocPlan);
             }
             else{
-//                    hier wäre auch ein tryToKickOtherRegistration oder sowas denkbar um einen Platz frei zu bekommen
-                notMatchable.add(singleRegistration);
+                System.out.println("@@@@ FEHLER: " + singleRegistration.getStudent() + " -> " + course.getName());
+                List<CourseRegistration> nMatchable = notMatchable.get(course);
+                nMatchable.add(singleRegistration);
+                notMatchable.put(course,nMatchable);
             }
         }
     }
@@ -113,7 +122,6 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
                 return courseGroup;
             }
         }
-        System.out.println("Für " + singleRegistration.getStudent() + " und Kurs " + course.getName() + " konnte keine freie Gruppe mehr gefunden werden.");
         return null;
     }
 
@@ -128,7 +136,7 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
                 return courseGroup;
             }
         }
-        System.out.println("Für " + team + " und Kurs " + course.getName() + " konnte keine freie Gruppe mehr gefunden werden.");
+
         return null;
     }
 
@@ -156,12 +164,12 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
      * accepting some conflicts between other CourseGroups.
      * @return all not matchable CourseRegistrations
      */
-    public List<CourseRegistration> getNotMatchable(){
+    public Map<Course,List<CourseRegistration>> getNotMatchable(){
         return notMatchable;
     }
 
     @Override
-    public List<Team> getNotMatchableTeams() {
+    public Map<Course,List<Team>> getNotMatchableTeams() {
         return this.notMatchableTeams;
     }
 

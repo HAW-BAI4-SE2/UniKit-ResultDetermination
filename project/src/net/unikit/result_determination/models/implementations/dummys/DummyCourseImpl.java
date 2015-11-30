@@ -74,10 +74,10 @@ public class DummyCourseImpl implements Course{
      *       maxTeamSize = 2;
      *       abbreviation = name;
      */
-    public DummyCourseImpl(String name, Integer semester, int min, int max){
+    public DummyCourseImpl(String name,String abbreviation, Integer semester, int min, int max){
         this.id = null;
         this.name = name;
-        this.abbreviation = name;
+        this.abbreviation = abbreviation;
         this.minTeamSize = min;
         this.maxTeamSize = max;
         this.fieldOfStudies = new ArrayList<>();

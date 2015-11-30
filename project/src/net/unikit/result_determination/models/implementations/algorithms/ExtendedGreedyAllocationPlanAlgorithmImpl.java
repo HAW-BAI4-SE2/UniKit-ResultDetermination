@@ -18,7 +18,7 @@ import java.util.*;
 public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationPlanAlgorithm {
 
     private AlgorithmSettings settings;
-    private List<CourseRegistration> notMatchable;
+    private Map<Course,List<CourseRegistration>> notMatchable;
     private Map<Course, Map<CourseRegistration,Integer>> dangerValues;
     private Map<Course, List<Course>> possibileCourseConflicts; // TODO auch Map<Course, Map<Course,Integer>> courseConflicts wäre denkbar, um die genaue Anzahl der Konflikte zu kennen
 
@@ -30,6 +30,8 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
     public ExtendedGreedyAllocationPlanAlgorithmImpl(AlgorithmSettings settings){
         this.settings = settings;
         possibileCourseConflicts = new HashMap<>();
+        notMatchable = new HashMap<>();
+        dangerValues = new HashMap<>();
     }
 
     /*
@@ -55,13 +57,13 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
      *
      */
     public AllocationPlan calculateAllocationPlan(List<Course> courses) throws NotEnoughCourseGroupsException, CourseGroupDoesntExistException {
+
         AllocationPlan allocPlan = new AllocationPlanImpl(courses);
-        notMatchable = new ArrayList<>();
         // Check, if there are enough available slots to assign each Student to a courseGroup
         checkAvailableSlots(courses);
 
         calculateConflictsBetweenCourses(courses);
-
+        System.out.println("***** START ALGORITHM *****");
         /*
          * The Algorithm:
          *
@@ -76,35 +78,33 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
          *
          */
         for(Course course : courses){
-            dangerValues = new HashMap<>();
-
+            notMatchable.put(course,new ArrayList<>());
             calculateSingleRegistrations(courses, course, allocPlan);
 
-
         }
+        System.out.println("***** STOP ALGORITHM *****");
         return allocPlan;
     }
 
     private void calculateSingleRegistrations(List<Course> courses, Course course, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
         List<CourseRegistration> singleRegistrations = course.getSingleRegistrations();
-
-        // TODO Möglicherweise je nach Danger-Wert des Studenten sortieren
         Collections.shuffle(singleRegistrations); // Keinen Studenten bevorzugen
 
         for(CourseRegistration singleRegistration :singleRegistrations){
-//                calculateDANGERValue(singleRegistration, course); // TODO wird noch nicht genutzt
+//                calculateDANGERValue(singleRegistration, course); //
 
             CourseGroup courseGroup = findCourseGroupFor(singleRegistration, course, allocPlan);
             boolean courseGroupChanged = false;
 
-//                System.out.println(singleRegistration + " wird versucht in Gruppe: " + courseGroup + " einzufügen");
-
             if(courseGroup != null){
-                // Wenn eine konfliktfreie Gruppe gefunden wurde, können wir diese dem Studenten zuweisen // TODO die conflict Überprüfung wird so doppelt ausgeführt.. vielleicht besser über einen Boolean in einer Map realisieren
+                // Wenn eine konfliktfreie Gruppe gefunden wurde, können wir diese dem Studenten zuweisen
                 if(!conflict(singleRegistration,courseGroup)){
                     registerStudent(singleRegistration, courseGroup, allocPlan);
                     courseGroupChanged=true;
                 }
+                /*
+                 *  Try to change a CourseRegistration from a possibile Group to the only left group
+                 */
                 else{
                     // Liefert eine leere Liste oder alle Gruppen in denen der Termin gültig wäre (können allerdings schon voll sein)
                     List<CourseGroup> possibileCourseGroups = findAlternativeCourseGroups(singleRegistration, course); // TODO könnte man sich auch vorher bereits speichern während findCourseGroupFor
@@ -123,7 +123,9 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
             }
 
             if(!courseGroupChanged){
-                notMatchable.add(singleRegistration); // TODO müsste eigentlich HashMap sein Course->Registration
+                List<CourseRegistration> nMatchable = notMatchable.get(course);
+                nMatchable.add(singleRegistration);
+                notMatchable.put(course, nMatchable);
             }
         }
     }
@@ -138,8 +140,6 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
         }
         return changeAbleStudent;
     }
-
-
 
     /*
         Berechnet den DANGER Wert eines Studenten im Zusammenspiel einer Veranstaltung.
@@ -205,12 +205,12 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
      * accepting some conflicts between other CourseGroups.
      * @return all not matchable CourseRegistrations
      */
-    public List<CourseRegistration> getNotMatchable(){
+    public Map<Course, List<CourseRegistration>> getNotMatchable(){
         return notMatchable;
     }
 
     @Override
-    public List<Team> getNotMatchableTeams() {
+    public Map<Course, List<Team>> getNotMatchableTeams() {
         return null;
     }
 
