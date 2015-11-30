@@ -29,8 +29,6 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
      */
     public ExtendedGreedyAllocationPlanAlgorithmImpl(AlgorithmSettings settings){
         this.settings = settings;
-        notMatchable = new ArrayList<>();
-        dangerValues = new HashMap<>();
         possibileCourseConflicts = new HashMap<>();
     }
 
@@ -54,28 +52,31 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
     /**
      * TODO the algorithm ignores TeamRegistrations at this moment
      * TODO Zurzeit ist der Algorithmus auch noch nicht Random -> es wird noch nichts geshufflet (könnte man ganz am Anfang einmal machen)
-     * Algorithm Idea:
      *
-     * For every Course
-     *      For Every Registration
-     *          possibileCourseGroup = findPossibileCourseGroup(the Registration, the Course);
-     *
-     *          either there was a possibile Group
-     *                 add the Registration to the possibile Group
-     *          else mark the Registration as notMatchable
      */
     public AllocationPlan calculateAllocationPlan(List<Course> courses) throws NotEnoughCourseGroupsException, CourseGroupDoesntExistException {
         AllocationPlan allocPlan = new AllocationPlanImpl(courses);
+        notMatchable = new ArrayList<>();
         // Check, if there are enough available slots to assign each Student to a courseGroup
         checkAvailableSlots(courses);
 
         calculateConflictsBetweenCourses(courses);
 
         /*
-         * Iterates over every Course
+         * The Algorithm:
+         *
+         * 1. For every Course c
+         *    2. For every single Registration s
+         *       Group g = findGroup(s,c); //
+         *       if (g has no conflicts with other groups of s and g isn't full yet)
+         *          g.addRegistration(s);
+         *       else if (g has no conflicts with other groups of s and g is full)
+         *          try to find a student in all alternative conflictfree groups who is able to switch the group with s
+         *
+         *
          */
         for(Course course : courses){
-
+            dangerValues = new HashMap<>();
             List<CourseRegistration> singleRegistrations = course.getSingleRegistrations();
 
             // TODO Möglicherweise je nach Danger-Wert des Studenten sortieren
@@ -85,7 +86,6 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
              * At this Moment in the development process the algorithm just focuses on singleRegistrations and ignores the teams.
              */
             for(CourseRegistration singleRegistration :singleRegistrations){
-
                 /*
                     Für jede aktuelle Registration könnte hier der DANGER-Wert berechnet werden.
                     Kann für einen Studenten dann keine Gruppe gefunden werden, weil alle Gruppen voll sind,
@@ -99,7 +99,7 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
                 CourseGroup courseGroup = findCourseGroupFor(singleRegistration, course, allocPlan); // throws CourseGroupDoesntExistException
                 boolean courseGroupChanged = false;
 
-                System.out.println(singleRegistration + " wird versucht in Gruppe: " + courseGroup + " einzufügen");
+//                System.out.println(singleRegistration + " wird versucht in Gruppe: " + courseGroup + " einzufügen");
 
                 if(courseGroup != null){
                     // Wenn eine konfliktfreie Gruppe gefunden wurde, können wir diese dem Studenten zuweisen // TODO die conflict Überprüfung wird so doppelt ausgeführt.. vielleicht besser über einen Boolean in einer Map realisieren
@@ -114,7 +114,8 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
                         for(CourseGroup possibileGroup : possibileCourseGroups){
                             CourseRegistration changeableStudent = findChangeableStudent(possibileGroup, courseGroup, allocPlan);
                             if(changeableStudent != null){
-                                registerStudent(changeableStudent,courseGroup, allocPlan);
+                                removeStudent(changeableStudent,possibileGroup,allocPlan);
+                                registerStudent(changeableStudent, courseGroup, allocPlan);
                                 registerStudent(singleRegistration,possibileGroup,allocPlan);
                                 courseGroupChanged=true;
                                 break;
@@ -140,6 +141,20 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
             }
         }
         return changeAbleStudent;
+    }
+
+    private void removeStudent(CourseRegistration changeableStudent, CourseGroup possibileGroup, AllocationPlan allocPlan){
+        try {
+            allocPlan.removeCourseGroupRegistration(changeableStudent, possibileGroup);
+        } catch (CourseGroupDoesntExistException e) {
+            e.printStackTrace();
+        }
+
+        if(this.studentsCourseGroups.get(changeableStudent.getStudent()) != null){
+            List<CourseGroup> studentsCourseGroups = this.studentsCourseGroups.get(changeableStudent.getStudent());
+            studentsCourseGroups.remove(possibileGroup);
+            this.studentsCourseGroups.put(changeableStudent.getStudent(), studentsCourseGroups); // update
+        }
     }
 
     private void registerStudent(CourseRegistration singleRegistration, CourseGroup courseGroup, AllocationPlan allocPlan) {

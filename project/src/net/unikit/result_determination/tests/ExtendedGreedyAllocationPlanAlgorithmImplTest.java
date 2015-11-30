@@ -26,7 +26,9 @@ public class ExtendedGreedyAllocationPlanAlgorithmImplTest {
 
     @Before
     public void setUp() throws Exception {
-        dummyDataGenerator = new DummyDataGenerator(9,3);
+        int numberOfStudents = 9;
+
+        dummyDataGenerator = new DummyDataGenerator(numberOfStudents,numberOfStudents/3);
     }
 
     @Test
@@ -63,9 +65,22 @@ public class ExtendedGreedyAllocationPlanAlgorithmImplTest {
          */
         for(Course course : courses){
             for(CourseRegistration singleReg : course.getSingleRegistrations()){
-                assertTrue(isPartOfCourseGroup(course, singleReg, allocPlan));
+                assertTrue(isPartOfOnlyOneCourseGroup(course,singleReg,allocPlan));
             }
         }
+    }
+
+    private boolean isPartOfOnlyOneCourseGroup(Course course, CourseRegistration singleReg, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
+        int numberOfGroups=0;
+        for(CourseGroup g : course.getCourseGroups()){
+            if(allocPlan.getGroupMembers(g).contains(singleReg)){
+                numberOfGroups++;
+            }
+        }
+        if(numberOfGroups == 1){
+            return true;
+        }
+        return false;
     }
 
     /*
