@@ -7,6 +7,7 @@ import net.unikit.result_determination.models.exceptions.CourseGroupFullExceptio
 
 import java.io.File;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Created by abq307 on 16.11.2015.
@@ -21,5 +22,5 @@ public interface AllocationPlan {
 
     public List<CourseRegistration> getGroupMembers(CourseGroup group) throws CourseGroupDoesntExistException;
 
-
+    void removeCourseGroupRegistration(CourseRegistration changeableStudent, CourseGroup courseGroup) throws CourseGroupDoesntExistException,NoSuchElementException;
 }

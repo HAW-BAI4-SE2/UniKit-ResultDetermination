@@ -9,10 +9,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Jones on 15.11.2015.
@@ -129,6 +126,20 @@ public class AllocationPlanImpl implements AllocationPlan {
     public List<CourseRegistration> getGroupMembers(CourseGroup group) throws CourseGroupDoesntExistException {
         if(courseGroupRegistrations.containsKey(group)){
             return courseGroupRegistrations.get(group);
+        }
+        else throw new CourseGroupDoesntExistException();
+    }
+
+    @Override
+    public void removeCourseGroupRegistration(CourseRegistration changeableStudent, CourseGroup courseGroup) throws CourseGroupDoesntExistException, NoSuchElementException {
+        if(courseGroupRegistrations.containsKey(courseGroup)){
+            List<CourseRegistration> registrations = courseGroupRegistrations.get(courseGroup);
+            if(registrations.contains(changeableStudent)){
+                registrations.remove(changeableStudent);
+            }
+            else{
+                throw new NoSuchElementException(changeableStudent.getStudent()+" isn't part of this CourseGoup.");
+            }
         }
         else throw new CourseGroupDoesntExistException();
     }

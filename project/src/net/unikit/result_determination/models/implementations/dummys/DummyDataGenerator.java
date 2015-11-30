@@ -92,34 +92,39 @@ public class DummyDataGenerator {
      * Es werden die Termine generiert und die Praktikumsgruppen erstellt.
      */
     private void generateCourses(int maxGroupSize){
+
+        // ********************************** Allgemeine Termine *******************************************************
+        // KW -> 43, 46, 49, 54
+        List<CourseGroupAppointment> zeiteinheitEins_Montagmorgens = new ArrayList<>();
+        zeiteinheitEins_Montagmorgens.add(dummyAppointmentMap.get("KW43_Montag_Früh"));
+        zeiteinheitEins_Montagmorgens.add(dummyAppointmentMap.get("KW46_Montag_Früh"));
+        zeiteinheitEins_Montagmorgens.add(dummyAppointmentMap.get("KW49_Montag_Früh"));
+        zeiteinheitEins_Montagmorgens.add(dummyAppointmentMap.get("KW54_Montag_Früh"));
+
+        // KW -> 44,47,50,55
+        List<CourseGroupAppointment> zeiteinheitZwei_Montagmorgens = new ArrayList<>();
+        zeiteinheitZwei_Montagmorgens.add(dummyAppointmentMap.get("KW44_Montag_Früh"));
+        zeiteinheitZwei_Montagmorgens.add(dummyAppointmentMap.get("KW47_Montag_Früh"));
+        zeiteinheitZwei_Montagmorgens.add(dummyAppointmentMap.get("KW50_Montag_Früh"));
+        zeiteinheitZwei_Montagmorgens.add(dummyAppointmentMap.get("KW55_Montag_Früh"));
+
+        // KW -> 45,48,51,56
+        List<CourseGroupAppointment> zeiteinheitDrei_Montagmorgens = new ArrayList<>();
+        zeiteinheitDrei_Montagmorgens.add(dummyAppointmentMap.get("KW45_Montag_Früh"));
+        zeiteinheitDrei_Montagmorgens.add(dummyAppointmentMap.get("KW48_Montag_Früh"));
+        zeiteinheitDrei_Montagmorgens.add(dummyAppointmentMap.get("KW51_Montag_Früh"));
+        zeiteinheitDrei_Montagmorgens.add(dummyAppointmentMap.get("KW56_Montag_Früh"));
+
+        // *************************************************************************************************************
         // LB -> immer Montag_Früh
         DummyCourseImpl lb = new DummyCourseImpl("Logik und Berechenbarkeit",2,1,2); // DummyCourseImpl(String name, Integer semester, int min, int max)
         List<CourseGroup> lbGroups = new ArrayList<>();
-
         // LBP/01 -> 43,46,49,54
-        List<CourseGroupAppointment> lb01Appointments = new ArrayList<>();
-        lb01Appointments.add(dummyAppointmentMap.get("KW43_Montag_Früh"));
-        lb01Appointments.add(dummyAppointmentMap.get("KW46_Montag_Früh"));
-        lb01Appointments.add(dummyAppointmentMap.get("KW49_Montag_Früh"));
-        lb01Appointments.add(dummyAppointmentMap.get("KW54_Montag_Früh"));
-
+        CourseGroup lb01 = new DummyCourseGroupImpl(lb,zeiteinheitEins_Montagmorgens,1,maxGroupSize);
         // LBP/02 -> 44,47,50,55
-        List<CourseGroupAppointment> lb02Appointments = new ArrayList<>();
-        lb02Appointments.add(dummyAppointmentMap.get("KW44_Montag_Früh"));
-        lb02Appointments.add(dummyAppointmentMap.get("KW47_Montag_Früh"));
-        lb02Appointments.add(dummyAppointmentMap.get("KW50_Montag_Früh"));
-        lb02Appointments.add(dummyAppointmentMap.get("KW55_Montag_Früh"));
-
+        CourseGroup lb02 = new DummyCourseGroupImpl(lb,zeiteinheitZwei_Montagmorgens,2,maxGroupSize);
         // LBP/03 -> 45,48,51,56
-        List<CourseGroupAppointment> lb03Appointments = new ArrayList<>();
-        lb03Appointments.add(dummyAppointmentMap.get("KW45_Montag_Früh"));
-        lb03Appointments.add(dummyAppointmentMap.get("KW48_Montag_Früh"));
-        lb03Appointments.add(dummyAppointmentMap.get("KW51_Montag_Früh"));
-        lb03Appointments.add(dummyAppointmentMap.get("KW56_Montag_Früh"));
-
-        CourseGroup lb01 = new DummyCourseGroupImpl(lb,lb01Appointments,1,maxGroupSize);
-        CourseGroup lb02 = new DummyCourseGroupImpl(lb,lb02Appointments,2,maxGroupSize);
-        CourseGroup lb03 = new DummyCourseGroupImpl(lb,lb03Appointments,3,maxGroupSize);
+        CourseGroup lb03 = new DummyCourseGroupImpl(lb,zeiteinheitDrei_Montagmorgens,3,maxGroupSize);
 
         lbGroups.add(lb01);
         lbGroups.add(lb02);
@@ -131,38 +136,62 @@ public class DummyDataGenerator {
         DummyCourseImpl rmp = new DummyCourseImpl("Rechner und Maschinennahe Programmierung",2,1,2);
         List<CourseGroup> rmpGroups = new ArrayList<>();
         // RMPP/01 -> 45,48,51,56
-        List<CourseGroupAppointment> rmpp1Appointments = new ArrayList<>();
-        rmpp1Appointments.add(dummyAppointmentMap.get("KW45_Montag_Früh"));
-        rmpp1Appointments.add(dummyAppointmentMap.get("KW48_Montag_Früh"));
-        rmpp1Appointments.add(dummyAppointmentMap.get("KW51_Montag_Früh"));
-        rmpp1Appointments.add(dummyAppointmentMap.get("KW56_Montag_Früh"));
-
+        CourseGroup rmpp1 = new DummyCourseGroupImpl(rmp,zeiteinheitDrei_Montagmorgens,1,maxGroupSize);
         // RMPP/02 -> 43,46,49,54
-        List<CourseGroupAppointment> rmpp2Appointments = new ArrayList<>();
-        rmpp2Appointments.add(dummyAppointmentMap.get("KW43_Montag_Früh"));
-        rmpp2Appointments.add(dummyAppointmentMap.get("KW46_Montag_Früh"));
-        rmpp2Appointments.add(dummyAppointmentMap.get("KW49_Montag_Früh"));
-        rmpp2Appointments.add(dummyAppointmentMap.get("KW54_Montag_Früh"));
+        CourseGroup rmpp2 = new DummyCourseGroupImpl(rmp,zeiteinheitEins_Montagmorgens,2,maxGroupSize);
         // RMPP/03 -> 44,47,50,55
-        List<CourseGroupAppointment> rmpp3Appointments = new ArrayList<>();
-        rmpp3Appointments.add(dummyAppointmentMap.get("KW44_Montag_Früh"));
-        rmpp3Appointments.add(dummyAppointmentMap.get("KW47_Montag_Früh"));
-        rmpp3Appointments.add(dummyAppointmentMap.get("KW50_Montag_Früh"));
-        rmpp3Appointments.add(dummyAppointmentMap.get("KW55_Montag_Früh"));
-
-        CourseGroup rmpp1 = new DummyCourseGroupImpl(rmp,rmpp1Appointments,1,maxGroupSize);
-        CourseGroup rmpp2 = new DummyCourseGroupImpl(rmp,rmpp2Appointments,2,maxGroupSize);
-        CourseGroup rmpp3 = new DummyCourseGroupImpl(rmp,rmpp3Appointments,3,maxGroupSize);
+        CourseGroup rmpp3 = new DummyCourseGroupImpl(rmp,zeiteinheitZwei_Montagmorgens,3,maxGroupSize);
 
         rmpGroups.add(rmpp1);
         rmpGroups.add(rmpp2);
         rmpGroups.add(rmpp3);
 
+
+        // *************************************************************************************************************
+
+        // DB
+        DummyCourseImpl db = new DummyCourseImpl("Datenbanken",2,1,2);
+        List<CourseGroup> dbGroups = new ArrayList<>();
+        // DBP/01 -> 45,48,51,56
+        CourseGroup dbp1 = new DummyCourseGroupImpl(db,zeiteinheitDrei_Montagmorgens,1,maxGroupSize);
+        // DBP/02 -> 43,46,49,54
+        CourseGroup dbp2 = new DummyCourseGroupImpl(db,zeiteinheitEins_Montagmorgens,2,maxGroupSize);
+        // DBP/03 -> 44,47,50,55
+        CourseGroup dbp3 = new DummyCourseGroupImpl(db,zeiteinheitZwei_Montagmorgens,3,maxGroupSize);
+
+        dbGroups.add(dbp1);
+        dbGroups.add(dbp2);
+        dbGroups.add(dbp3);
+
+
+        // *************************************************************************************************************
+
+        // SE
+        DummyCourseImpl se = new DummyCourseImpl("Software Entwicklung",2,1,2);
+        List<CourseGroup> seGroups = new ArrayList<>();
+
+        // SEP/01 -> 45,48,51,56
+        CourseGroup se1 = new DummyCourseGroupImpl(se,zeiteinheitDrei_Montagmorgens,1,maxGroupSize);
+        // SEP/02 -> 43,46,49,54
+        CourseGroup se2 = new DummyCourseGroupImpl(se,zeiteinheitEins_Montagmorgens,2,maxGroupSize);
+        // SEP/03 -> 44,47,50,55
+        CourseGroup se3 = new DummyCourseGroupImpl(se,zeiteinheitZwei_Montagmorgens,3,maxGroupSize);
+
+        seGroups.add(se1);
+        seGroups.add(se2);
+        seGroups.add(se3);
+
+        // *************************************************************************************************************
+
         lb.setCourseGroups(lbGroups);
         rmp.setCourseGroups(rmpGroups);
+        db.setCourseGroups(dbGroups);
+        se.setCourseGroups(seGroups);
 
         courses.add(lb);
         courses.add(rmp);
+        courses.add(db);
+//        courses.add(se);
     }
 
     private void registrateAllStudentsAsSingleRegistration(){
