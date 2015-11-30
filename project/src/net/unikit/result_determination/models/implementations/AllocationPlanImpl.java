@@ -17,7 +17,8 @@ import java.util.*;
 public class AllocationPlanImpl implements AllocationPlan {
 
     private List<Course> courses;
-    private Map<CourseGroup,List<CourseRegistration>> courseGroupRegistrations;
+    private Map<CourseGroup,List<CourseRegistration>> courseGroupSingleRegistrations;
+    private Map<CourseGroup,List<TeamRegistration>> courseGroupTeamRegistrations;
 
 
     private final String CRLF = "\r\n";
@@ -26,14 +27,16 @@ public class AllocationPlanImpl implements AllocationPlan {
     private String delimiterStudents = ",";
     public AllocationPlanImpl(List<Course> courses){
         this.courses = courses;
-        this.courseGroupRegistrations = new HashMap<>();
+        this.courseGroupSingleRegistrations = new HashMap<>();
+        this.courseGroupTeamRegistrations = new HashMap<>();
         initCourseGroupRegistrations();
     }
 
     private void initCourseGroupRegistrations() {
         for(Course c : this.courses){
             for(CourseGroup g : c.getCourseGroups()){
-                courseGroupRegistrations.put(g, new ArrayList<>());
+                courseGroupSingleRegistrations.put(g, new ArrayList<>());
+                courseGroupTeamRegistrations.put(g,new ArrayList<>());
             }
         }
     }
@@ -98,9 +101,23 @@ public class AllocationPlanImpl implements AllocationPlan {
 
     @Override
     public void addCourseRegistration(CourseGroup group, CourseRegistration registration) throws CourseGroupFullException, CourseGroupDoesntExistException {
-        if(courseGroupRegistrations.containsKey(group)){
+        if(courseGroupSingleRegistrations.containsKey(group)){
             if(!isCourseGroupFull(group)){
-                List<CourseRegistration> courseRegistrations = courseGroupRegistrations.get(group);
+                List<CourseRegistration> courseRegistrations = courseGroupSingleRegistrations.get(group);
+                courseRegistrations.add(registration);
+            }
+            else{
+                throw new CourseGroupFullException();
+            }
+        }
+        else throw new CourseGroupDoesntExistException();
+    }
+
+    @Override
+    public void addTeamRegistration(CourseGroup group, TeamRegistration registration) throws CourseGroupFullException, CourseGroupDoesntExistException {
+        if(courseGroupSingleRegistrations.containsKey(group)){
+            if(!isCourseGroupFull(group)){
+                List<TeamRegistration> courseRegistrations = courseGroupTeamRegistrations.get(group);
                 courseRegistrations.add(registration);
             }
             else{
@@ -112,9 +129,9 @@ public class AllocationPlanImpl implements AllocationPlan {
 
     @Override
     public boolean isCourseGroupFull(CourseGroup group) throws CourseGroupDoesntExistException {
-        if(courseGroupRegistrations.containsKey(group)){
+        if(courseGroupSingleRegistrations.containsKey(group)){
             int maxSize = group.getMaxGroupSize();
-            if(courseGroupRegistrations.get(group).size() >= maxSize){ // TODO wurde schnell schnell gemacht und muss vllt nochmal überprüft werden
+            if(courseGroupSingleRegistrations.get(group).size() + courseGroupTeamRegistrations.size() >= maxSize){ // TODO wurde schnell schnell gemacht und muss vllt nochmal überprüft werden
                 return true;
             }
             else return false;
@@ -123,17 +140,39 @@ public class AllocationPlanImpl implements AllocationPlan {
     }
 
     @Override
-    public List<CourseRegistration> getGroupMembers(CourseGroup group) throws CourseGroupDoesntExistException {
-        if(courseGroupRegistrations.containsKey(group)){
-            return courseGroupRegistrations.get(group);
+    public List<CourseRegistration> getCourseRegistrations(CourseGroup group) throws CourseGroupDoesntExistException {
+        if(courseGroupSingleRegistrations.containsKey(group)){
+            return courseGroupSingleRegistrations.get(group);
+        }
+        else throw new CourseGroupDoesntExistException();
+    }
+
+    @Override
+    public List<TeamRegistration> getTeamRegistrations(CourseGroup group) throws CourseGroupDoesntExistException {
+        if(courseGroupTeamRegistrations.containsKey(group)){
+            return courseGroupTeamRegistrations.get(group);
         }
         else throw new CourseGroupDoesntExistException();
     }
 
     @Override
     public void removeCourseGroupRegistration(CourseRegistration changeableStudent, CourseGroup courseGroup) throws CourseGroupDoesntExistException, NoSuchElementException {
-        if(courseGroupRegistrations.containsKey(courseGroup)){
-            List<CourseRegistration> registrations = courseGroupRegistrations.get(courseGroup);
+        if(courseGroupSingleRegistrations.containsKey(courseGroup)){
+            List<CourseRegistration> registrations = courseGroupSingleRegistrations.get(courseGroup);
+            if(registrations.contains(changeableStudent)){
+                registrations.remove(changeableStudent);
+            }
+            else{
+                throw new NoSuchElementException(changeableStudent.getStudent()+" isn't part of this CourseGoup.");
+            }
+        }
+        else throw new CourseGroupDoesntExistException();
+    }
+
+    @Override
+    public void removeCourseGroupRegistration(TeamRegistration changeableStudent, CourseGroup courseGroup) throws CourseGroupDoesntExistException, NoSuchElementException {
+        if(courseGroupTeamRegistrations.containsKey(courseGroup)){
+            List<TeamRegistration> registrations = courseGroupTeamRegistrations.get(courseGroup);
             if(registrations.contains(changeableStudent)){
                 registrations.remove(changeableStudent);
             }

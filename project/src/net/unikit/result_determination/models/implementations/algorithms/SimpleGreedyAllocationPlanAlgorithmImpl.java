@@ -1,10 +1,7 @@
 package net.unikit.result_determination.models.implementations.algorithms;
 
-import net.unikit.database.interfaces.entities.Course;
-import net.unikit.database.interfaces.entities.CourseGroup;
-import net.unikit.database.interfaces.entities.CourseRegistration;
+import net.unikit.database.interfaces.entities.*;
 import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistException;
-import net.unikit.result_determination.models.exceptions.CourseGroupFullException;
 import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
 import net.unikit.result_determination.models.implementations.AllocationPlanImpl;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
@@ -20,6 +17,7 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
 
     AlgorithmSettings settings;
     List<CourseRegistration> notMatchable;
+    List<Team> notMatchableTeams;
     Map<CourseRegistration,Integer> dangerValues;
 
 
@@ -30,6 +28,7 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
     public SimpleGreedyAllocationPlanAlgorithmImpl(AlgorithmSettings settings){
         this.settings = settings;
         notMatchable = new ArrayList<>();
+        notMatchableTeams = new ArrayList<>();
         dangerValues = new HashMap<>();
     }
 
@@ -55,47 +54,52 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
          * Iterates over every Course
          */
         for(Course course : courses){
-
-            List<CourseRegistration> singleRegistrations = course.getSingleRegistrations();
-            Collections.shuffle(singleRegistrations); // Keinen Studenten bevorzugen
-            /*
-             * At this Moment in the development process the algorithm just focuses on singleRegistrations and ignores the teams.
-             */
-            for(CourseRegistration singleRegistration :singleRegistrations){
-
-                CourseGroup possibleCourseGroup = findPossibileCourseGroupFor(singleRegistration, course, allocPlan); // throws CourseGroupDoesntExistException
-//                System.out.println("Mögliche CourseGroup:" + possibleCourseGroup);
-
-                // a possibile courseGroup was found
-                if(possibleCourseGroup != null){
-                    try {
-                        allocPlan.addCourseRegistration(possibleCourseGroup, singleRegistration);
-                    } catch (CourseGroupFullException e) {
-                        e.printStackTrace();
-                    } catch (CourseGroupDoesntExistException e) {
-                        e.printStackTrace();
-                    }
-                    List<CourseGroup> studentsCourseGroups;
-
-                    // Wenn der Student noch keiner einzigen Gruppe zugewiesen wurde (dann hat er auch noch keinen Map Eintrag)
-                    if(this.studentsCourseGroups.get(singleRegistration.getStudent()) == null){
-                        studentsCourseGroups = new ArrayList<>();
-                    }
-                    else{
-                        studentsCourseGroups = this.studentsCourseGroups.get(singleRegistration.getStudent());
-                    }
-
-                    studentsCourseGroups.add(possibleCourseGroup);
-                    System.out.println(singleRegistration.getStudent()+" Gruppen:"+studentsCourseGroups);
-                    this.studentsCourseGroups.put(singleRegistration.getStudent(), studentsCourseGroups); // update
-                }
-                else{
-//                    hier wäre auch ein tryToKickOtherRegistration oder sowas denkbar um einen Platz frei zu bekommen
-                    notMatchable.add(singleRegistration);
-                }
-            }
+            calculateSingleRegistrations(courses, course, allocPlan);
+            calculateTeamRegistrations(courses, course, allocPlan);
         }
         return allocPlan;
+    }
+
+    private void calculateTeamRegistrations(List<Course> courses, Course course, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
+        List<Team> teams = course.getTeams();
+        Collections.shuffle(teams);
+
+        for(Team t : teams){
+
+            CourseGroup possibleCourseGroup = findPossibileCourseGroupFor(t, course, allocPlan); // throws CourseGroupDoesntExistException
+//                System.out.println("Mögliche CourseGroup:" + possibleCourseGroup);
+
+            // a possibile courseGroup was found
+            if(possibleCourseGroup != null){
+                registerTeam(t, possibleCourseGroup, allocPlan);
+            }
+            else{
+//                    hier wäre auch ein tryToKickOtherRegistration oder sowas denkbar um einen Platz frei zu bekommen
+                notMatchableTeams.add(t);
+            }
+        }
+    }
+
+    private void calculateSingleRegistrations(List<Course> courses, Course course, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
+        List<CourseRegistration> singleRegistrations = course.getSingleRegistrations();
+        Collections.shuffle(singleRegistrations); // Keinen Studenten bevorzugen
+        /*
+         * At this Moment in the development process the algorithm just focuses on singleRegistrations and ignores the teams.
+         */
+        for(CourseRegistration singleRegistration :singleRegistrations){
+
+            CourseGroup possibleCourseGroup = findPossibileCourseGroupFor(singleRegistration, course, allocPlan); // throws CourseGroupDoesntExistException
+//                System.out.println("Mögliche CourseGroup:" + possibleCourseGroup);
+
+            // a possibile courseGroup was found
+            if(possibleCourseGroup != null){
+                registerStudent(singleRegistration, possibleCourseGroup, allocPlan);
+            }
+            else{
+//                    hier wäre auch ein tryToKickOtherRegistration oder sowas denkbar um einen Platz frei zu bekommen
+                notMatchable.add(singleRegistration);
+            }
+        }
     }
 
     /**
@@ -112,6 +116,22 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
         System.out.println("Für " + singleRegistration.getStudent() + " und Kurs " + course.getName() + " konnte keine freie Gruppe mehr gefunden werden.");
         return null;
     }
+
+    /**
+     * Tries to find a possibile CourseGroup for one CourseRegistration
+     * @param team the Team
+     * @param course the Course for which the CourseGroup shall be found
+     */
+    private CourseGroup findPossibileCourseGroupFor(Team team, Course course, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
+        for(CourseGroup courseGroup : course.getCourseGroups()){
+            if(!allocPlan.isCourseGroupFull(courseGroup) && !conflict(team,courseGroup)){
+                return courseGroup;
+            }
+        }
+        System.out.println("Für " + team + " und Kurs " + course.getName() + " konnte keine freie Gruppe mehr gefunden werden.");
+        return null;
+    }
+
 
     /**
      * Tries to find every potential CourseGroup.
@@ -138,6 +158,11 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
      */
     public List<CourseRegistration> getNotMatchable(){
         return notMatchable;
+    }
+
+    @Override
+    public List<Team> getNotMatchableTeams() {
+        return this.notMatchableTeams;
     }
 
 }

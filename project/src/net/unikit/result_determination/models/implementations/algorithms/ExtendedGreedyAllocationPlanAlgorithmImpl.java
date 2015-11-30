@@ -3,8 +3,8 @@ package net.unikit.result_determination.models.implementations.algorithms;
 import net.unikit.database.interfaces.entities.Course;
 import net.unikit.database.interfaces.entities.CourseGroup;
 import net.unikit.database.interfaces.entities.CourseRegistration;
+import net.unikit.database.interfaces.entities.Team;
 import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistException;
-import net.unikit.result_determination.models.exceptions.CourseGroupFullException;
 import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
 import net.unikit.result_determination.models.implementations.AllocationPlanImpl;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
@@ -125,7 +125,7 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
                 }
 
                 if(!courseGroupChanged){
-                    notMatchable.add(singleRegistration);
+                    notMatchable.add(singleRegistration); // TODO müsste eigentlich HashMap sein Course->Registration
                 }
             }
         }
@@ -134,7 +134,7 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
 
     private CourseRegistration findChangeableStudent(CourseGroup from, CourseGroup to, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
         CourseRegistration changeAbleStudent = null;
-        List<CourseRegistration> courseRegistrations = allocPlan.getGroupMembers(from);
+        List<CourseRegistration> courseRegistrations = allocPlan.getCourseRegistrations(from);
         for(CourseRegistration courseRegistration : courseRegistrations) {
             if (!conflict(courseRegistration, to)) {
                 changeAbleStudent = courseRegistration;
@@ -143,42 +143,7 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
         return changeAbleStudent;
     }
 
-    private void removeStudent(CourseRegistration changeableStudent, CourseGroup possibileGroup, AllocationPlan allocPlan){
-        try {
-            allocPlan.removeCourseGroupRegistration(changeableStudent, possibileGroup);
-        } catch (CourseGroupDoesntExistException e) {
-            e.printStackTrace();
-        }
 
-        if(this.studentsCourseGroups.get(changeableStudent.getStudent()) != null){
-            List<CourseGroup> studentsCourseGroups = this.studentsCourseGroups.get(changeableStudent.getStudent());
-            studentsCourseGroups.remove(possibileGroup);
-            this.studentsCourseGroups.put(changeableStudent.getStudent(), studentsCourseGroups); // update
-        }
-    }
-
-    private void registerStudent(CourseRegistration singleRegistration, CourseGroup courseGroup, AllocationPlan allocPlan) {
-        try {
-            allocPlan.addCourseRegistration(courseGroup, singleRegistration);
-        } catch (CourseGroupFullException e) {
-            e.printStackTrace();
-        } catch (CourseGroupDoesntExistException e) {
-            e.printStackTrace();
-        }
-        List<CourseGroup> studentsCourseGroups;
-
-        // Wenn der Student noch keiner einzigen Gruppe zugewiesen wurde (dann hat er auch noch keinen Map Eintrag)
-        if(this.studentsCourseGroups.get(singleRegistration.getStudent()) == null){
-            studentsCourseGroups = new ArrayList<>();
-        }
-        else{
-            studentsCourseGroups = this.studentsCourseGroups.get(singleRegistration.getStudent());
-        }
-
-        studentsCourseGroups.add(courseGroup);
-        System.out.println(singleRegistration.getStudent()+" Gruppen:"+studentsCourseGroups);
-        this.studentsCourseGroups.put(singleRegistration.getStudent(), studentsCourseGroups); // update
-    }
 
     /*
         Berechnet den DANGER Wert eines Studenten im Zusammenspiel einer Veranstaltung.
@@ -246,6 +211,11 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
      */
     public List<CourseRegistration> getNotMatchable(){
         return notMatchable;
+    }
+
+    @Override
+    public List<Team> getNotMatchableTeams() {
+        return null;
     }
 
     /*

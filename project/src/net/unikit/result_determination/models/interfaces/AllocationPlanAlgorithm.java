@@ -2,6 +2,7 @@ package net.unikit.result_determination.models.interfaces;
 
 import net.unikit.database.interfaces.entities.Course;
 import net.unikit.database.interfaces.entities.CourseRegistration;
+import net.unikit.database.interfaces.entities.Team;
 import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistException;
 import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
 
@@ -23,4 +24,6 @@ public interface AllocationPlanAlgorithm {
     public AllocationPlan calculateAllocationPlan(List<Course> courses) throws NotEnoughCourseGroupsException, CourseGroupDoesntExistException;
 
     public List<CourseRegistration> getNotMatchable();
+
+    public List<Team> getNotMatchableTeams();
 }

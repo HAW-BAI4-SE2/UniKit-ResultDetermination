@@ -52,7 +52,7 @@ public class ExtendedGreedyAllocationPlanAlgorithmImplTest {
 
         for(Course course : courses){
             for(CourseGroup courseGroup : course.getCourseGroups()){
-                System.out.println(courseGroup + " Teilnehmerzahl: " + allocPlan.getGroupMembers(courseGroup));
+                System.out.println(courseGroup + " Teilnehmer: " + allocPlan.getCourseRegistrations(courseGroup));
             }
         }
         /*
@@ -73,7 +73,7 @@ public class ExtendedGreedyAllocationPlanAlgorithmImplTest {
     private boolean isPartOfOnlyOneCourseGroup(Course course, CourseRegistration singleReg, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
         int numberOfGroups=0;
         for(CourseGroup g : course.getCourseGroups()){
-            if(allocPlan.getGroupMembers(g).contains(singleReg)){
+            if(allocPlan.getCourseRegistrations(g).contains(singleReg)){
                 numberOfGroups++;
             }
         }
@@ -92,7 +92,7 @@ public class ExtendedGreedyAllocationPlanAlgorithmImplTest {
         List<CourseGroup> groups = c.getCourseGroups();
         for(CourseGroup group : groups){
             // Wenn die CourseRegistration noch nicht gefunden wurde und die CourseRegistration in der aktuellen Gruppe registriert wurde
-            if(allocPlan.getGroupMembers(group).contains(cReg)){
+            if(allocPlan.getCourseRegistrations(group).contains(cReg)){
                 isPartOfOneCourseGroup=true;
                 break;
             }

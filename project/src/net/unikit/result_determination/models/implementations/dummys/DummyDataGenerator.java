@@ -42,6 +42,7 @@ public class DummyDataGenerator {
         generateStudents(numberStudents);
         generateCourses(maxGroupSize);
         registrateAllStudentsAsSingleRegistration();
+//        buildTeamAndRegister();
     }
 
     public List<Course> getDummyCourses(){
@@ -205,5 +206,48 @@ public class DummyDataGenerator {
             }
             ((DummyCourseImpl)c).setCourseRegistrations(singleRegistrations);
         }
+    }
+
+    /*
+     *  Wandelt alle CourseRegistrations in TeamRegistrations um und simuliert die Teambildung.
+     *  Es gibt nur noch Teams.
+     */
+    private void buildTeamAndRegister(){
+
+        for(Course c : courses){
+            System.out.println("\n**** Create Teams for " + c.getName() + ". ****");
+            List<Team> teams = new ArrayList<>();
+
+            for(int i=0; i< c.getSingleRegistrations().size()/c.getMaxTeamSize();i++){
+                Team t = new DummyTeamImpl(c);
+                teams.add(t);
+            }
+
+            for(CourseRegistration courseRegistration : c.getSingleRegistrations()){
+                Student s = courseRegistration.getStudent();
+                Team t = findTeam(teams, c.getMaxTeamSize());
+                TeamRegistration teamReg = new DummyTeamRegistration(t,s);
+                ((DummyTeamImpl)t).addTeamRegistration(teamReg);
+            }
+            ((DummyCourseImpl)c).setTeams(teams);
+
+            // ****************************************** AUSGABE ******************************************************
+            for(Team t:teams){
+                System.out.println(t);
+            }
+            ((DummyCourseImpl) c).setCourseRegistrations(new ArrayList<>());
+        }
+
+    }
+
+    private Team findTeam(List<Team> teams, int maxTeamSize) {
+        Team t = null;
+        for(Team team : teams){
+            if(team.getTeamRegistrations().size() < maxTeamSize ){
+                t = team;
+                break;
+            }
+        }
+        return t;
     }
 }

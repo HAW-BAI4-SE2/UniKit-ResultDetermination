@@ -1,9 +1,13 @@
 package net.unikit.result_determination.models.implementations.algorithms;
 
 import net.unikit.database.interfaces.entities.*;
+import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistException;
+import net.unikit.result_determination.models.exceptions.CourseGroupFullException;
 import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
+import net.unikit.result_determination.models.interfaces.AllocationPlan;
 import net.unikit.result_determination.models.interfaces.AllocationPlanAlgorithm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,9 +30,11 @@ abstract class AbstractAllocationPlanAlgorithm implements AllocationPlanAlgorith
      * @param courses the courses that shall be checked
      */
     public void checkAvailableSlots(List<Course> courses) throws NotEnoughCourseGroupsException {
+
         for(Course c : courses){
             int availableSlots = 0;
             int numberRegistrations = c.getSingleRegistrations().size()+c.getTeams().size();
+            System.out.println("Number of Registrations: " + numberRegistrations);
             for(CourseGroup group : c.getCourseGroups()){
                 availableSlots+=group.getMaxGroupSize();
             }
@@ -54,6 +60,27 @@ abstract class AbstractAllocationPlanAlgorithm implements AllocationPlanAlgorith
             }
         }
         return false;
+    }
+
+    /*
+     * Prüft für alle Teammitglieder, ob es zu einem Konflikt mit dieser Gruppe käme.
+     */
+    public boolean conflict(Team team, CourseGroup courseGroup){
+        List<TeamRegistration> teamRegistrations = team.getTeamRegistrations();
+        for(TeamRegistration teamReg : teamRegistrations){
+            List<CourseGroup> studentCourseGroups = studentsCourseGroups.get(teamReg.getStudent());
+
+            if(studentCourseGroups != null){
+                // hier wird für alle Praktikumsgruppen, in denen ein Student Mitglied ist überprüft,
+                // ob es mit der zu überprüfenden Gruppe zu einem Konflikt käme
+                for(CourseGroup group : studentCourseGroups){
+                    if(conflict(group,courseGroup)){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false; // kein konflikt ist aufgetreten
     }
 
     /*
@@ -95,5 +122,66 @@ abstract class AbstractAllocationPlanAlgorithm implements AllocationPlanAlgorith
         return false;
     }
 
+    protected void removeStudent(CourseRegistration changeableStudent, CourseGroup possibileGroup, AllocationPlan allocPlan){
+        try {
+            allocPlan.removeCourseGroupRegistration(changeableStudent, possibileGroup);
+        } catch (CourseGroupDoesntExistException e) {
+            e.printStackTrace();
+        }
+
+        if(this.studentsCourseGroups.get(changeableStudent.getStudent()) != null){
+            List<CourseGroup> studentsCourseGroups = this.studentsCourseGroups.get(changeableStudent.getStudent());
+            studentsCourseGroups.remove(possibileGroup);
+            this.studentsCourseGroups.put(changeableStudent.getStudent(), studentsCourseGroups); // update
+        }
+    }
+
+    protected void registerStudent(CourseRegistration singleRegistration, CourseGroup courseGroup, AllocationPlan allocPlan) {
+        try {
+            allocPlan.addCourseRegistration(courseGroup, singleRegistration);
+        } catch (CourseGroupFullException e) {
+            e.printStackTrace();
+        } catch (CourseGroupDoesntExistException e) {
+            e.printStackTrace();
+        }
+        List<CourseGroup> studentsCourseGroups;
+
+        // Wenn der Student noch keiner einzigen Gruppe zugewiesen wurde (dann hat er auch noch keinen Map Eintrag)
+        if(this.studentsCourseGroups.get(singleRegistration.getStudent()) == null){
+            studentsCourseGroups = new ArrayList<>();
+        }
+        else{
+            studentsCourseGroups = this.studentsCourseGroups.get(singleRegistration.getStudent());
+        }
+
+        studentsCourseGroups.add(courseGroup);
+        System.out.println(singleRegistration.getStudent()+" Gruppen:"+studentsCourseGroups);
+        this.studentsCourseGroups.put(singleRegistration.getStudent(), studentsCourseGroups); // update
+    }
+
+    protected void registerTeam(Team team, CourseGroup courseGroup, AllocationPlan allocPlan){
+        for(TeamRegistration teamReg : team.getTeamRegistrations() ){
+            try {
+                allocPlan.addTeamRegistration(courseGroup, teamReg);
+            } catch (CourseGroupFullException e) {
+                e.printStackTrace();
+            } catch (CourseGroupDoesntExistException e) {
+                e.printStackTrace();
+            }
+            List<CourseGroup> studentsCourseGroups;
+
+            // Wenn der Student noch keiner einzigen Gruppe zugewiesen wurde (dann hat er auch noch keinen Map Eintrag)
+            if(this.studentsCourseGroups.get(teamReg.getStudent()) == null){
+                studentsCourseGroups = new ArrayList<>();
+            }
+            else{
+                studentsCourseGroups = this.studentsCourseGroups.get(teamReg.getStudent());
+            }
+
+            studentsCourseGroups.add(courseGroup);
+            System.out.println(teamReg.getStudent()+" Gruppen:"+studentsCourseGroups);
+            this.studentsCourseGroups.put(teamReg.getStudent(), studentsCourseGroups); // update
+        }
+    }
 
 }

@@ -1,8 +1,6 @@
 package net.unikit.result_determination.tests;
 
-import net.unikit.database.interfaces.entities.Course;
-import net.unikit.database.interfaces.entities.CourseGroup;
-import net.unikit.database.interfaces.entities.CourseRegistration;
+import net.unikit.database.interfaces.entities.*;
 import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistException;
 import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
 import net.unikit.result_determination.models.implementations.AlgorithmSettingsImpl;
@@ -27,7 +25,7 @@ public class SimpleGreedyAllocationPlanAlgorithmImplTest {
 
     @Before
     public void setUp() throws Exception {
-        dummyDataGenerator = new DummyDataGenerator(9,3);
+        dummyDataGenerator = new DummyDataGenerator(48,16);
     }
 
     @Test
@@ -48,10 +46,11 @@ public class SimpleGreedyAllocationPlanAlgorithmImplTest {
 
 
         System.out.println("Liste aller Studenten, die nicht verarbeitet werden konnten: "+allocPlanAlgorithm.getNotMatchable());
+        System.out.println("Liste aller Teams, die nicht verarbeitet werden konnten: "+allocPlanAlgorithm.getNotMatchableTeams());
 
         for(Course course : courses){
             for(CourseGroup courseGroup : course.getCourseGroups()){
-                System.out.println(courseGroup + " Teilnehmerzahl: " + allocPlan.getGroupMembers(courseGroup));
+                System.out.println(courseGroup + " Teilnehmer: " + allocPlan.getCourseRegistrations(courseGroup) + allocPlan.getTeamRegistrations(courseGroup));
             }
         }
         /*
@@ -64,10 +63,43 @@ public class SimpleGreedyAllocationPlanAlgorithmImplTest {
          */
         for(Course course : courses){
             for(CourseRegistration singleReg : course.getSingleRegistrations()){
-                assertTrue(isPartOfCourseGroup(course, singleReg, allocPlan));
+                assertTrue(isPartOfOnlyOneCourseGroup(course, singleReg, allocPlan));
+            }
+            for(Team team : course.getTeams()){
+                for(TeamRegistration teamRegistration : team.getTeamRegistrations()){
+                    assertTrue(isPartOfOnlyOneCourseGroup(course, teamRegistration, allocPlan));
+                }
             }
         }
+
+
 //        assertTrue(!allocPlanAlgorithm.getNotMatchable().isEmpty());
+    }
+
+    private boolean isPartOfOnlyOneCourseGroup(Course course, TeamRegistration singleReg, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
+        int numberOfGroups=0;
+        for(CourseGroup g : course.getCourseGroups()){
+            if(allocPlan.getTeamRegistrations(g).contains(singleReg)){
+                numberOfGroups++;
+            }
+        }
+        if(numberOfGroups == 1){
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isPartOfOnlyOneCourseGroup(Course course, CourseRegistration singleReg, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
+        int numberOfGroups=0;
+        for(CourseGroup g : course.getCourseGroups()){
+            if(allocPlan.getCourseRegistrations(g).contains(singleReg)){
+                numberOfGroups++;
+            }
+        }
+        if(numberOfGroups == 1){
+            return true;
+        }
+        return false;
     }
 
     /*
@@ -79,7 +111,7 @@ public class SimpleGreedyAllocationPlanAlgorithmImplTest {
         List<CourseGroup> groups = c.getCourseGroups();
         for(CourseGroup group : groups){
             // Wenn die CourseRegistration noch nicht gefunden wurde und die CourseRegistration in der aktuellen Gruppe registriert wurde
-            if(allocPlan.getGroupMembers(group).contains(cReg)){
+            if(allocPlan.getCourseRegistrations(group).contains(cReg)){
                 isPartOfOneCourseGroup=true;
                 break;
             }
