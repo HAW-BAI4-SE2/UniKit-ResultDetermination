@@ -1,11 +1,12 @@
 package net.unikit.result_determination.models.implementations.dummys;
 
-import net.unikit.database.interfaces.ids.StudentNumber;
+
+import net.unikit.database.interfaces.entities.Student;
 
 /**
  * Created by abq307 on 18.11.2015.
  */
-public class DummyStudentNumberImpl implements StudentNumber {
+public class DummyStudentNumberImpl implements Student.StudentNumber {
 
     String s;
 

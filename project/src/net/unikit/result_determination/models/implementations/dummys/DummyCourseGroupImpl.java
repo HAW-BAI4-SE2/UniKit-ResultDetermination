@@ -3,7 +3,7 @@ package net.unikit.result_determination.models.implementations.dummys;
 import net.unikit.database.interfaces.entities.Appointment;
 import net.unikit.database.interfaces.entities.Course;
 import net.unikit.database.interfaces.entities.CourseGroup;
-import net.unikit.database.interfaces.ids.CourseGroupId;
+import net.unikit.database.interfaces.entities.CourseGroupAppointment;
 
 import java.util.List;
 
@@ -13,11 +13,11 @@ import java.util.List;
 public class DummyCourseGroupImpl implements CourseGroup {
 
     Course course;
-    List<Appointment> appointments;
+    List<CourseGroupAppointment> appointments;
     int groupNumber;
     int maxGroupSize;
 
-    public DummyCourseGroupImpl(Course c, List<Appointment> appointments, int number, int maxSize){
+    public DummyCourseGroupImpl(Course c, List<CourseGroupAppointment> appointments, int number, int maxSize){
         this.course = c;
         this.appointments = appointments;
         this.groupNumber = number;
@@ -29,7 +29,7 @@ public class DummyCourseGroupImpl implements CourseGroup {
     }
 
     @Override
-    public CourseGroupId getId() {
+    public CourseGroup.ID getId() {
         throw new UnsupportedOperationException();
     }
 
@@ -44,7 +44,7 @@ public class DummyCourseGroupImpl implements CourseGroup {
     }
 
     @Override
-    public List<Appointment> getAppointments() {
+    public List<CourseGroupAppointment> getAppointments() {
         return appointments;
     }
 

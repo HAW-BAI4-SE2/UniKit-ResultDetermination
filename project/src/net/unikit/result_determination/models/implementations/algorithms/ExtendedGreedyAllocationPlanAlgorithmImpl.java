@@ -66,6 +66,14 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
              */
             for(CourseRegistration singleRegistration :singleRegistrations){
 
+                /*
+                    Für jede aktuelle Registration könnte hier der DANGER-Wert berechnet werden.
+                    Kann für einen Studenten dann keine Gruppe gefunden werden, weil alle Gruppen voll sind,
+                    können wir unter allen Studenten für die schon ein DANGER-Wert berechnet wurde schauen, ob
+                    es jemanden aus einer möglichen Gruppe gibt, der in die Gruppe könnte in die der aktuelle Student gerade
+                    müsste, weil es die einzige Möglichkeit wäre.
+                */
+
 
                 // Irgendwie möchte ich bei findPossibileCourseGroupFor in jedem Fall etwas zurück bekommen, außer sie ist ungültig.
                 // ich möchte aber nur eine Gruppe zurückbekommen, wenn es keine andere Möglichkeit mehr gibt. Also die letzte gültige Gruppe
@@ -76,12 +84,13 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
 
 
 
-
+                // Liefert null oder eine gültige Gruppe in der auch noch Platz ist
                 CourseGroup possibleCourseGroup = findPossibileCourseGroupFor(singleRegistration, course, allocPlan); // throws CourseGroupDoesntExistException
 //                System.out.println("Mögliche CourseGroup:" + possibleCourseGroup);
 
                 // a possibile courseGroup was found
 
+                // Liefert eine leere Liste oder alle Gruppen in denen der Termin gültig wäre (können allerdings schon voll sein)
                 List<CourseGroup> possibileCourseGroups = findPossibileCourseGroups(singleRegistration, course);
 
 

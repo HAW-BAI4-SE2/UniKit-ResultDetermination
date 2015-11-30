@@ -1,15 +1,15 @@
 package net.unikit.result_determination.models.implementations.dummys;
 
-import net.unikit.database.interfaces.entities.Appointment;
+import net.unikit.database.interfaces.entities.CourseGroup;
+import net.unikit.database.interfaces.entities.CourseGroupAppointment;
 import net.unikit.database.interfaces.entities.DidacticUnit;
-import net.unikit.database.interfaces.ids.AppointmentId;
 
 import java.util.Date;
 
 /**
  * Created by abq307 on 18.11.2015.
  */
-public class DummyAppointmentImpl implements Appointment {
+public class DummyAppointmentImpl implements CourseGroupAppointment {
 
     DummyDate startDate;
     DummyDate endDate;
@@ -51,18 +51,28 @@ public class DummyAppointmentImpl implements Appointment {
     }
 
     @Override
-    public AppointmentId getId() {
+    public CourseGroupAppointment.ID getId() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public DidacticUnit getDidacticUnit() {
-        throw new UnsupportedOperationException();
+    public CourseGroup getDidacticUnit() {
+        return null;
     }
 
     @Override
-    public void setDidacticUnit(DidacticUnit didacticUnit) {
-        throw new UnsupportedOperationException();
+    public CourseGroup getCourseGroup() {
+        return null;
+    }
+
+    @Override
+    public void setCourseGroup(CourseGroup courseGroup) {
+
+    }
+
+    @Override
+    public void setDidacticUnit(CourseGroup courseGroup) {
+
     }
 
     @Override

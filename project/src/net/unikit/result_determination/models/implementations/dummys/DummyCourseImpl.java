@@ -1,7 +1,6 @@
 package net.unikit.result_determination.models.implementations.dummys;
 
 import net.unikit.database.interfaces.entities.*;
-import net.unikit.database.interfaces.ids.CourseId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,7 @@ import java.util.List;
  */
 public class DummyCourseImpl implements Course{
 
-    private CourseId id;
+    private Course.ID id;
     private String name;
     private String abbreviation;
     private Integer semester;
@@ -52,7 +51,7 @@ public class DummyCourseImpl implements Course{
         return result;
     }
 
-    public DummyCourseImpl(CourseId id, String name, String abbreviation, Integer semester, int minTeamSize, int maxTeamSize, List<FieldOfStudy> fieldOfStudies,
+    public DummyCourseImpl(Course.ID id, String name, String abbreviation, Integer semester, int minTeamSize, int maxTeamSize, List<FieldOfStudy> fieldOfStudies,
                            List<CourseGroup> courseGroups, List<CourseRegistration> singleRegistrations, List<Team> teamsRegistrations){
         this.id = id;
         this.name = name;
@@ -93,7 +92,7 @@ public class DummyCourseImpl implements Course{
 
 
     @Override
-    public CourseId getId() {
+    public Course.ID getId() {
         return id;
     }
 

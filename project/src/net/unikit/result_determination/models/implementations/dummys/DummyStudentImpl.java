@@ -1,7 +1,6 @@
 package net.unikit.result_determination.models.implementations.dummys;
 
 import net.unikit.database.interfaces.entities.*;
-import net.unikit.database.interfaces.ids.StudentNumber;
 
 import java.util.List;
 

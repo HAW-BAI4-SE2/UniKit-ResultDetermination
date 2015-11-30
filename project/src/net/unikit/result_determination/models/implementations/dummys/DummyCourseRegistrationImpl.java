@@ -3,7 +3,6 @@ package net.unikit.result_determination.models.implementations.dummys;
 import net.unikit.database.interfaces.entities.Course;
 import net.unikit.database.interfaces.entities.CourseRegistration;
 import net.unikit.database.interfaces.entities.Student;
-import net.unikit.database.interfaces.ids.CourseRegistrationId;
 
 import java.util.Date;
 
@@ -45,7 +44,7 @@ public class DummyCourseRegistrationImpl implements CourseRegistration {
     }
 
     @Override
-    public CourseRegistrationId getId() {
+    public CourseRegistration.ID getId() {
         throw new UnsupportedOperationException();
     }
 
