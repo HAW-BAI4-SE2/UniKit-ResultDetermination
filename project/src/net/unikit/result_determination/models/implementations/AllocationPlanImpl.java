@@ -131,7 +131,7 @@ public class AllocationPlanImpl implements AllocationPlan {
     public boolean isCourseGroupFull(CourseGroup group) throws CourseGroupDoesntExistException {
         if(courseGroupSingleRegistrations.containsKey(group)){
             int maxSize = group.getMaxGroupSize();
-            if(courseGroupSingleRegistrations.get(group).size() + courseGroupTeamRegistrations.size() >= maxSize){ // TODO wurde schnell schnell gemacht und muss vllt nochmal überprüft werden
+            if(courseGroupSingleRegistrations.get(group).size() + courseGroupTeamRegistrations.get(group).size() >= maxSize){ // TODO wurde schnell schnell gemacht und muss vllt nochmal überprüft werden
                 return true;
             }
             else return false;
