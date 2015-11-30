@@ -77,59 +77,55 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
          */
         for(Course course : courses){
             dangerValues = new HashMap<>();
-            List<CourseRegistration> singleRegistrations = course.getSingleRegistrations();
 
-            // TODO Möglicherweise je nach Danger-Wert des Studenten sortieren
-            Collections.shuffle(singleRegistrations); // Keinen Studenten bevorzugen
+            calculateSingleRegistrations(courses, course, allocPlan);
 
-            /*
-             * At this Moment in the development process the algorithm just focuses on singleRegistrations and ignores the teams.
-             */
-            for(CourseRegistration singleRegistration :singleRegistrations){
-                /*
-                    Für jede aktuelle Registration könnte hier der DANGER-Wert berechnet werden.
-                    Kann für einen Studenten dann keine Gruppe gefunden werden, weil alle Gruppen voll sind,
-                    können wir unter allen Studenten für die schon ein DANGER-Wert berechnet wurde schauen, ob
-                    es jemanden aus einer möglichen Gruppe gibt, der in die Gruppe könnte in die der aktuelle Student gerade
-                    müsste, weil es die einzige Möglichkeit wäre.
-                */
+
+        }
+        return allocPlan;
+    }
+
+    private void calculateSingleRegistrations(List<Course> courses, Course course, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
+        List<CourseRegistration> singleRegistrations = course.getSingleRegistrations();
+
+        // TODO Möglicherweise je nach Danger-Wert des Studenten sortieren
+        Collections.shuffle(singleRegistrations); // Keinen Studenten bevorzugen
+
+        for(CourseRegistration singleRegistration :singleRegistrations){
 //                calculateDANGERValue(singleRegistration, course); // TODO wird noch nicht genutzt
 
-                // Liefert null oder eine gültige Gruppe in der auch noch Platz ist
-                CourseGroup courseGroup = findCourseGroupFor(singleRegistration, course, allocPlan); // throws CourseGroupDoesntExistException
-                boolean courseGroupChanged = false;
+            CourseGroup courseGroup = findCourseGroupFor(singleRegistration, course, allocPlan);
+            boolean courseGroupChanged = false;
 
 //                System.out.println(singleRegistration + " wird versucht in Gruppe: " + courseGroup + " einzufügen");
 
-                if(courseGroup != null){
-                    // Wenn eine konfliktfreie Gruppe gefunden wurde, können wir diese dem Studenten zuweisen // TODO die conflict Überprüfung wird so doppelt ausgeführt.. vielleicht besser über einen Boolean in einer Map realisieren
-                    if(!conflict(singleRegistration,courseGroup)){
-                        registerStudent(singleRegistration, courseGroup, allocPlan);
-                        courseGroupChanged=true;
-                    }
-                    else{
-                        // Liefert eine leere Liste oder alle Gruppen in denen der Termin gültig wäre (können allerdings schon voll sein)
-                        List<CourseGroup> possibileCourseGroups = findAlternativeCourseGroups(singleRegistration, course); // TODO könnte man sich auch vorher bereits speichern während findCourseGroupFor
+            if(courseGroup != null){
+                // Wenn eine konfliktfreie Gruppe gefunden wurde, können wir diese dem Studenten zuweisen // TODO die conflict Überprüfung wird so doppelt ausgeführt.. vielleicht besser über einen Boolean in einer Map realisieren
+                if(!conflict(singleRegistration,courseGroup)){
+                    registerStudent(singleRegistration, courseGroup, allocPlan);
+                    courseGroupChanged=true;
+                }
+                else{
+                    // Liefert eine leere Liste oder alle Gruppen in denen der Termin gültig wäre (können allerdings schon voll sein)
+                    List<CourseGroup> possibileCourseGroups = findAlternativeCourseGroups(singleRegistration, course); // TODO könnte man sich auch vorher bereits speichern während findCourseGroupFor
 
-                        for(CourseGroup possibileGroup : possibileCourseGroups){
-                            CourseRegistration changeableStudent = findChangeableStudent(possibileGroup, courseGroup, allocPlan);
-                            if(changeableStudent != null){
-                                removeStudent(changeableStudent,possibileGroup,allocPlan);
-                                registerStudent(changeableStudent, courseGroup, allocPlan);
-                                registerStudent(singleRegistration,possibileGroup,allocPlan);
-                                courseGroupChanged=true;
-                                break;
-                            }
+                    for(CourseGroup possibileGroup : possibileCourseGroups){
+                        CourseRegistration changeableStudent = findChangeableStudent(possibileGroup, courseGroup, allocPlan);
+                        if(changeableStudent != null){
+                            removeStudent(changeableStudent,possibileGroup,allocPlan);
+                            registerStudent(changeableStudent, courseGroup, allocPlan);
+                            registerStudent(singleRegistration,possibileGroup,allocPlan);
+                            courseGroupChanged=true;
+                            break;
                         }
                     }
                 }
+            }
 
-                if(!courseGroupChanged){
-                    notMatchable.add(singleRegistration); // TODO müsste eigentlich HashMap sein Course->Registration
-                }
+            if(!courseGroupChanged){
+                notMatchable.add(singleRegistration); // TODO müsste eigentlich HashMap sein Course->Registration
             }
         }
-        return allocPlan;
     }
 
     private CourseRegistration findChangeableStudent(CourseGroup from, CourseGroup to, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {

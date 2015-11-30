@@ -25,7 +25,8 @@ public class SimpleGreedyAllocationPlanAlgorithmImplTest {
 
     @Before
     public void setUp() throws Exception {
-        dummyDataGenerator = new DummyDataGenerator(48,16);
+        dummyDataGenerator = new DummyDataGenerator(18,6);
+        dummyDataGenerator.buildTeamAndRegister();
     }
 
     @Test

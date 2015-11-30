@@ -212,7 +212,7 @@ public class DummyDataGenerator {
      *  Wandelt alle CourseRegistrations in TeamRegistrations um und simuliert die Teambildung.
      *  Es gibt nur noch Teams.
      */
-    private void buildTeamAndRegister(){
+    public void buildTeamAndRegister(){
 
         for(Course c : courses){
             System.out.println("\n**** Create Teams for " + c.getName() + ". ****");

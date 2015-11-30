@@ -28,9 +28,7 @@ public class DummyTeamImpl implements net.unikit.database.interfaces.entities.Te
 
     @Override
     public String toString(){
-        String s = "*********** Team ***********\n";
-        s+=registrations;
-        return s;
+        return ""+registrations;
     }
     @Override
     public ID getId() {
