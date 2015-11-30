@@ -170,7 +170,9 @@ public class DummyDataGenerator {
         for(Course c : courses){
             List<CourseRegistration> singleRegistrations = c.getSingleRegistrations();
             for (Student s : students){
-                singleRegistrations.add(new DummyCourseRegistrationImpl(s,c));
+                CourseRegistration singleRegistration = new DummyCourseRegistrationImpl(s,c);
+                singleRegistrations.add(singleRegistration);
+                ((DummyStudentImpl)s).addCourseRegistration(singleRegistration);
             }
             ((DummyCourseImpl)c).setCourseRegistrations(singleRegistrations);
         }

@@ -2,6 +2,7 @@ package net.unikit.result_determination.models.implementations.dummys;
 
 import net.unikit.database.interfaces.entities.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,6 +11,7 @@ import java.util.List;
 public class DummyStudentImpl implements Student {
 
     StudentNumber s;
+    List<CourseRegistration> courseRegistrations;
 
     @Override
     public boolean equals(Object o) {
@@ -34,6 +36,11 @@ public class DummyStudentImpl implements Student {
 
     public DummyStudentImpl(StudentNumber s){
         this.s = s;
+        courseRegistrations = new ArrayList<>();
+    }
+
+    public void addCourseRegistration(CourseRegistration courseRegistration){
+        courseRegistrations.add(courseRegistration);
     }
 
     @Override
@@ -103,7 +110,7 @@ public class DummyStudentImpl implements Student {
 
     @Override
     public List<CourseRegistration> getCourseRegistrations() {
-        throw new UnsupportedOperationException();
+        return courseRegistrations;
     }
 
     @Override
