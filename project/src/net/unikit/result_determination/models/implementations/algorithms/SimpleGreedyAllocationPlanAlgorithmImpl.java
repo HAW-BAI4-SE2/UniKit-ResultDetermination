@@ -61,8 +61,8 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
             notMatchable.put(course, new ArrayList<>());
             notMatchableTeams.put(course, new ArrayList<>());
 
-            calculateSingleRegistrations(courses, course, allocPlan);
             calculateTeamRegistrations(courses, course, allocPlan);
+            calculateSingleRegistrations(courses, course, allocPlan);
         }
 
         System.out.println("***** STOP ALGORITHM *****");

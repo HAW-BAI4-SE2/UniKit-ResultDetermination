@@ -88,10 +88,12 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
 
     private void calculateSingleRegistrations(List<Course> courses, Course course, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
         List<CourseRegistration> singleRegistrations = course.getSingleRegistrations();
-        Collections.shuffle(singleRegistrations); // Keinen Studenten bevorzugen
+//        Collections.shuffle(singleRegistrations); // Keinen Studenten bevorzugen
+
+        calculateDangerValues(singleRegistrations, course); //
+
 
         for(CourseRegistration singleRegistration :singleRegistrations){
-//                calculateDANGERValue(singleRegistration, course); //
 
             CourseGroup courseGroup = findCourseGroupFor(singleRegistration, course, allocPlan);
             boolean courseGroupChanged = false;
@@ -136,6 +138,7 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
         for(CourseRegistration courseRegistration : courseRegistrations) {
             if (!conflict(courseRegistration, to)) {
                 changeAbleStudent = courseRegistration;
+                break;
             }
         }
         return changeAbleStudent;
@@ -218,7 +221,7 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
      * Calculates the Danger-Value of alle registrations
      * TODO Not Finished!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
      */
-    private void calculateDangerValues(List<CourseRegistration> singleRegistrations) {
+    private void calculateDangerValues(List<CourseRegistration> singleRegistrations, Course course) {
         /*
          * Für alle Registrierungen die im aktuellen Kurs gemacht wurden
          */
