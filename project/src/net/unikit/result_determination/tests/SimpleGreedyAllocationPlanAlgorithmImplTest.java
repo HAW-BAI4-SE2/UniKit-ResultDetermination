@@ -22,10 +22,11 @@ public class SimpleGreedyAllocationPlanAlgorithmImplTest {
 
 
     DummyDataGenerator dummyDataGenerator;
+    int numberOfStudents = 48;
 
     @Before
     public void setUp() throws Exception {
-        dummyDataGenerator = new DummyDataGenerator(18,6);
+        dummyDataGenerator = new DummyDataGenerator(numberOfStudents,numberOfStudents/3);
         dummyDataGenerator.buildTeamAndRegister();
     }
 
@@ -42,19 +43,24 @@ public class SimpleGreedyAllocationPlanAlgorithmImplTest {
         AllocationPlan allocPlan = null;
         // *************************** start *************************************
 
-        allocPlan = allocPlanAlgorithm.calculateAllocationPlan(courses);
+        for(int i=0; i<100; i++){
+            int notMatchable=0;
+            allocPlanAlgorithm = new SimpleGreedyAllocationPlanAlgorithmImpl(settings);
+            allocPlan = allocPlanAlgorithm.calculateAllocationPlan(courses);
 
-
-
-
-        for(Course course : courses){
-            System.out.println("\n*** "+course.getName()+" ***");
-            System.out.println("NOT MATCHABLE : "+allocPlanAlgorithm.getNotMatchable().get(course));
-            System.out.println("NOT MATCHABLE TEAMS : "+allocPlanAlgorithm.getNotMatchableTeams().get(course));
-            for(CourseGroup courseGroup : course.getCourseGroups()){
-                System.out.println(courseGroup + " Teilnehmer: " + allocPlan.getCourseRegistrations(courseGroup) + allocPlan.getTeamRegistrations(courseGroup));
+            for(Course course : courses){
+//                System.out.println("\n*** "+course.getName()+" ***");
+//                System.out.println("NOT MATCHABLE : "+allocPlanAlgorithm.getNotMatchable().get(course));
+//                System.out.println("NOT MATCHABLE TEAMS : "+allocPlanAlgorithm.getNotMatchableTeams().get(course));
+                notMatchable += allocPlanAlgorithm.getNotMatchableTeams().get(course).size();
+                for(CourseGroup courseGroup : course.getCourseGroups()){
+                    System.out.println(courseGroup + " Teilnehmer: " + allocPlan.getCourseRegistrations(courseGroup) + allocPlan.getTeamRegistrations(courseGroup));
+                }
             }
+
+            System.out.println("************************************************ Ergebnis: " + notMatchable + " von " + (numberOfStudents/2)*3 + "**********************************************************");
         }
+
         /*
          * Wir müssen für jeden AllocationPlan folgendes garantieren:
          *

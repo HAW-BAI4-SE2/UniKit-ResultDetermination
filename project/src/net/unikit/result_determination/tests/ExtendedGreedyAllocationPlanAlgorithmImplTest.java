@@ -26,7 +26,7 @@ public class ExtendedGreedyAllocationPlanAlgorithmImplTest {
 
     @Before
     public void setUp() throws Exception {
-        int numberOfStudents = 9;
+        int numberOfStudents = 12;
 
         dummyDataGenerator = new DummyDataGenerator(numberOfStudents,numberOfStudents/3);
     }

@@ -160,7 +160,7 @@ abstract class AbstractAllocationPlanAlgorithm implements AllocationPlanAlgorith
         }
 
         studentsCourseGroups.add(courseGroup);
-        System.out.println(singleRegistration.getStudent()+" Gruppen:"+studentsCourseGroups);
+//        System.out.println(singleRegistration.getStudent()+" Gruppen:"+studentsCourseGroups);
         this.studentsCourseGroups.put(singleRegistration.getStudent(), studentsCourseGroups); // update
     }
 
@@ -184,7 +184,7 @@ abstract class AbstractAllocationPlanAlgorithm implements AllocationPlanAlgorith
             }
 
             studentsCourseGroups.add(courseGroup);
-            System.out.println(teamReg.getStudent()+" Gruppen:"+studentsCourseGroups);
+//            System.out.println(teamReg.getStudent()+" Gruppen:"+studentsCourseGroups);
             this.studentsCourseGroups.put(teamReg.getStudent(), studentsCourseGroups); // update
         }
     }

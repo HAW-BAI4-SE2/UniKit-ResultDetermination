@@ -88,7 +88,7 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
 
     private void calculateSingleRegistrations(List<Course> courses, Course course, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
         List<CourseRegistration> singleRegistrations = course.getSingleRegistrations();
-//        Collections.shuffle(singleRegistrations); // Keinen Studenten bevorzugen
+        Collections.shuffle(singleRegistrations); // Keinen Studenten bevorzugen
 
         calculateDangerValues(singleRegistrations, course); //
 
