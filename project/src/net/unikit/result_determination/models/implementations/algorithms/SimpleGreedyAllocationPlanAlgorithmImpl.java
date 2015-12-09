@@ -6,6 +6,7 @@ import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsEx
 import net.unikit.result_determination.models.implementations.AllocationPlanImpl;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
+import net.unikit.result_determination.models.interfaces.AllocationPlanAlgorithm;
 
 import java.util.*;
 
@@ -13,7 +14,7 @@ import java.util.*;
  * Created by Jones on 15.11.2015.
  * An Implementation for creating allocation plans inspired by Greedy-Algorithms.
  */
-public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationPlanAlgorithm {
+public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationPlanAlgorithm implements AllocationPlanAlgorithm{
 
     AlgorithmSettings settings;
     Map<Course,List<CourseRegistration>> notMatchable;
