@@ -94,7 +94,6 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
 
 
         for(CourseRegistration singleRegistration :singleRegistrations){
-
             CourseGroup courseGroup = findCourseGroupFor(singleRegistration, course, allocPlan);
             boolean courseGroupChanged = false;
 

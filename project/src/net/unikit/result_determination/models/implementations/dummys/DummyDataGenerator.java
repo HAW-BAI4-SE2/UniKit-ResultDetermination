@@ -236,7 +236,35 @@ public class DummyDataGenerator {
             }
             ((DummyCourseImpl) c).setCourseRegistrations(new ArrayList<>());
         }
+    }
 
+    public void buildTeamsAndRegisterWithConditions(){
+
+        for(Course c : courses){
+            System.out.println("\n**** Create Teams for " + c.getName() + ". ****");
+            List<Team> teams = new ArrayList<>();
+            List<CourseRegistration> singleRegistrations = c.getSingleRegistrations();
+            Collections.shuffle(singleRegistrations);
+
+            for(int i=0; i< c.getSingleRegistrations().size()/c.getMaxTeamSize();i++){
+                Team t = new DummyTeamImpl(c);
+                teams.add(t);
+            }
+
+            for(CourseRegistration courseRegistration : singleRegistrations){
+                Student s = courseRegistration.getStudent();
+                Team t = findTeam(teams, c.getMaxTeamSize());
+                TeamRegistration teamReg = new DummyTeamRegistration(t,s);
+                ((DummyTeamImpl)t).addTeamRegistration(teamReg);
+            }
+            ((DummyCourseImpl)c).setTeams(teams);
+
+            // ****************************************** AUSGABE ******************************************************
+            for(Team t:teams){
+                System.out.println(t);
+            }
+            ((DummyCourseImpl) c).setCourseRegistrations(new ArrayList<>());
+        }
     }
 
     private Team findTeam(List<Team> teams, int maxTeamSize) {
