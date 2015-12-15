@@ -43,6 +43,7 @@ public class AllocationPlanImpl implements AllocationPlan {
 
     @Override
     public void exportAsCSV( File file) {
+        System.out.println("File: " + file);
         try {
             FileWriter writer = new FileWriter(file);
             //add date
@@ -52,37 +53,26 @@ public class AllocationPlanImpl implements AllocationPlan {
             //Go through List of all Courses
             for (Course course : courses) {
                 //Go through List of all Groups of one Course
-                for (int courseGroup = 0; courseGroup < course.getCourseGroups().size(); courseGroup++) {
-                    writer.append(
-                            //add course name
-                            course.getName()
-                    );
+                for (CourseGroup courseGroup : course.getCourseGroups()) {
+                    writer.append(course.getName());
                     //add delimiter
                     writer.append(
                             delimiter
                     );
                     //add groupNumber to the List
                     writer.append(
-                           String.valueOf(course.getCourseGroups().get(courseGroup).getGroupNumber())
+                           String.valueOf(courseGroup.getGroupNumber())
                     );
                     //add delimiter
                     writer.append(
                             delimiter
                     );
-                    //Go through all Students of a courseGroup
-                    for (int student = 0; student < course.getCourseGroups().get(courseGroup).getMaxGroupSize(); student++) {
-//                        writer.append(
+                    writer.append(
+                            courseGroupTeamRegistrations.get(courseGroup).toString()
 //                                // add all students of the Group
 //                                 // TO DO List<Student> getStudentsOfTheGroup
 //                                course.getCourseGroups().get(courseGroup).get(student).getStudentNumber().toString()
-//                        );
-                        //add delimiter and eol
-                        if (student < course.getCourseGroups().get(courseGroup).getMaxGroupSize() - 1) {
-                            writer.append(delimiterStudents);
-                        } else {
-                            writer.append(CRLF);
-                        }
-                    }
+                    );
                 }
             }
             //makes buffer empty

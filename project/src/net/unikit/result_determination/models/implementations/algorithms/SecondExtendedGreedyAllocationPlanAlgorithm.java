@@ -58,7 +58,7 @@ public class SecondExtendedGreedyAllocationPlanAlgorithm extends AbstractAllocat
 
             List<Team> teams = course.getTeams();
             Collections.shuffle(teams);
-//            Collections.sort(teams, new TeamSizeComparator());
+            Collections.sort(teams, new TeamSizeComparator()); // Innerhalb der Größe wird es trotzdem ein anderes geben
 //            System.out.println("Teamgröße von Team 1 = " +teams.get(0));
 //            System.out.println("Teamgröße vom letzten Team = " +teams.get(teams.size()-1));
             for(Team t : teams){

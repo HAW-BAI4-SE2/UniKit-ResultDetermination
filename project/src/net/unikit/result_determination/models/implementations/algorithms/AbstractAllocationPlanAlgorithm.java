@@ -79,7 +79,7 @@ abstract class AbstractAllocationPlanAlgorithm implements AllocationPlanAlgorith
                 // hier wird für alle Praktikumsgruppen, in denen ein Student Mitglied ist überprüft,
                 // ob es mit der zu überprüfenden Gruppe zu einem Konflikt käme
                 for(CourseGroup group : studentCourseGroups){
-                    if(conflict(group,courseGroup)){
+                    if(conflict(group,courseGroup)){ // TODO Fachrichtung und Semester beachten! Andere Semester und Fachrichtungen sind egal.
                         return true;
                     }
                 }

@@ -6,7 +6,6 @@ import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistE
 import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
 import net.unikit.result_determination.models.implementations.AlgorithmSettingsImpl;
 import net.unikit.result_determination.models.implementations.algorithms.SecondExtendedGreedyAllocationPlanAlgorithm;
-import net.unikit.result_determination.models.implementations.algorithms.SimpleGreedyAllocationPlanAlgorithmImpl;
 import net.unikit.result_determination.models.implementations.dummys.DummyDataGenerator;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
@@ -14,14 +13,12 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static junit.framework.Assert.assertTrue;
-
 /**
  * Created by Jones on 13.12.2015.
  */
 public class SecondExtendedGreedyAllocationPlanAlgorithmTest extends TestCase {
     DummyDataGenerator dummyDataGenerator;
-    int numberOfStudents = 48;
+    int numberOfStudents = 30000;
 
     public void setUp() throws Exception {
 //        int numberOfStudents = 12;
@@ -41,6 +38,10 @@ public class SecondExtendedGreedyAllocationPlanAlgorithmTest extends TestCase {
         SecondExtendedGreedyAllocationPlanAlgorithm allocPlanAlgorithm = new SecondExtendedGreedyAllocationPlanAlgorithm();
         AllocationPlan allocPlan = null;
         // *************************** start *************************************
+
+        allocPlan = allocPlanAlgorithm.calculateAllocationPlan(courses);
+
+//        allocPlan.exportAsCSV(new File("C:"+File.separator+"Users"+ File.separator + "abq307.INFORMATIK"+File.separator+"Desktop"+File.separator+"AllocPlanTest.txt"));
 
         for(int i=0; i<100; i++){
             int notMatchable=0;
@@ -123,8 +124,6 @@ public class SecondExtendedGreedyAllocationPlanAlgorithmTest extends TestCase {
                 break;
             }
         }
-
-
         return isPartOfOneCourseGroup;
     }
 }
