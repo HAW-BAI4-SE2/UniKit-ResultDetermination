@@ -39,19 +39,25 @@ public class SecondExtendedGreedyAllocationPlanAlgorithmTest extends TestCase {
         AllocationPlan allocPlan = null;
         // *************************** start *************************************
 
-        allocPlan = allocPlanAlgorithm.calculateAllocationPlan(courses);
-
+//        allocplan = allocplanalgorithm.calculateallocationplan(courses);
 //        allocPlan.exportAsCSV(new File("C:"+File.separator+"Users"+ File.separator + "abq307.INFORMATIK"+File.separator+"Desktop"+File.separator+"AllocPlanTest.txt"));
 
         for(int i=0; i<100; i++){
             int notMatchable=0;
+            int numberOfDestroyedTeams=0;
             allocPlanAlgorithm = new SecondExtendedGreedyAllocationPlanAlgorithm();
             allocPlan = allocPlanAlgorithm.calculateAllocationPlan(courses);
 
             for(Course course : courses){
                 System.out.println("\n*** "+course.getName()+" ***");
-//                System.out.println("NOT MATCHABLE : "+allocPlanAlgorithm.getNotMatchable().get(course));
                 System.out.println("NOT MATCHABLE TEAMS : "+allocPlanAlgorithm.getNotMatchableTeams().get(course));
+
+                for(Team team : course.getTeams()){
+                    if(!teamPreservation(team,allocPlan)){
+
+                    }
+                }
+
                 notMatchable += allocPlanAlgorithm.getNotMatchableTeams().get(course).size();
                 for(CourseGroup courseGroup : course.getCourseGroups()){
                     System.out.println(courseGroup + " Teilnehmer: " + allocPlan.getCourseRegistrations(courseGroup) + allocPlan.getTeamRegistrations(courseGroup));
@@ -82,6 +88,17 @@ public class SecondExtendedGreedyAllocationPlanAlgorithmTest extends TestCase {
 
 
 //        assertTrue(!allocPlanAlgorithm.getNotMatchable().isEmpty());
+    }
+
+    private boolean teamPreservation(Team team, AllocationPlan plan) throws CourseGroupDoesntExistException {
+            Course course = team.getCourse();
+            for(TeamRegistration t1 : team.getTeamRegistrations()){
+                for(TeamRegistration t2 : team.getTeamRegistrations()){
+
+                }
+            }
+
+            return false;
     }
 
     private boolean isPartOfOnlyOneCourseGroup(Course course, TeamRegistration singleReg, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {

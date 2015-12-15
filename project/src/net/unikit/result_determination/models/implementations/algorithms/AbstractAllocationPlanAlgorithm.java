@@ -18,11 +18,9 @@ import java.util.Map;
 abstract class AbstractAllocationPlanAlgorithm implements AllocationPlanAlgorithm {
 
     protected Map<Student,List<CourseGroup>> studentsCourseGroups;
-    protected Map<CourseRegistration,CourseGroup> conflicts;
 
     public AbstractAllocationPlanAlgorithm(){
         this.studentsCourseGroups = new HashMap<>();
-        this.conflicts = new HashMap<>();
     }
 
     /**
@@ -187,6 +185,10 @@ abstract class AbstractAllocationPlanAlgorithm implements AllocationPlanAlgorith
 //            System.out.println(teamReg.getStudent()+" Gruppen:"+studentsCourseGroups);
             this.studentsCourseGroups.put(teamReg.getStudent(), studentsCourseGroups); // update
         }
+    }
+
+    public Map<Student,List<CourseGroup>> getStudentsCourseGroups(){
+        return studentsCourseGroups;
     }
 
 }
