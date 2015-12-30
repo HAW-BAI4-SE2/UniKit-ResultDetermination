@@ -14,7 +14,7 @@ import java.util.*;
  * Created by Jones on 15.11.2015.
  * An Implementation for creating allocation plans inspired by Greedy-Algorithms.
  */
-public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationPlanAlgorithm implements AllocationPlanAlgorithm{
+public class SimpleGreedyAllocationPlanAlgorithmImpl implements AllocationPlanAlgorithm{
 
     AlgorithmSettings settings;
     Map<Course,List<CourseRegistration>> notMatchable;
@@ -50,7 +50,7 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
     public AllocationPlan calculateAllocationPlan(List<Course> courses) throws NotEnoughCourseGroupsException, CourseGroupDoesntExistException {
         AllocationPlan allocPlan = new AllocationPlanImpl(courses);
         // Check, if there are enough available slots to assign each Student to a courseGroup
-        checkAvailableSlots(courses);
+        AlgorithmUtils.checkAvailableSlots(courses);
 
         System.out.println("***** START ALGORITHM *****");
 
@@ -80,7 +80,7 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
 
             // a possibile courseGroup was found
             if(possibleCourseGroup != null){
-                registerTeam(t, possibleCourseGroup, allocPlan);
+                allocPlan.registerTeam(t, possibleCourseGroup);
             }
             else{
                 System.out.println("@@@@ FEHLER: " + t + " -> " + course.getName());
@@ -101,7 +101,7 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
 
             // a possibile courseGroup was found
             if(possibleCourseGroup != null){
-                registerStudent(singleRegistration, possibleCourseGroup, allocPlan);
+                allocPlan.registerStudent(singleRegistration, possibleCourseGroup);
             }
             else{
                 System.out.println("@@@@ FEHLER: " + singleRegistration.getStudent() + " -> " + course.getName());
@@ -119,7 +119,7 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
      */
     private CourseGroup findPossibileCourseGroupFor(CourseRegistration singleRegistration, Course course, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
         for(CourseGroup courseGroup : course.getCourseGroups()){
-            if(!allocPlan.isCourseGroupFull(courseGroup) && !conflict(singleRegistration,courseGroup)){
+            if(!allocPlan.isCourseGroupFull(courseGroup) && !allocPlan.conflict(singleRegistration, courseGroup)){
                 return courseGroup;
             }
         }
@@ -133,7 +133,7 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
      */
     private CourseGroup findPossibileCourseGroupFor(Team team, Course course, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {
         for(CourseGroup courseGroup : course.getCourseGroups()){
-            if(!allocPlan.isCourseGroupFull(courseGroup) && !conflict(team,courseGroup)){
+            if(!allocPlan.isCourseGroupFull(courseGroup) && !allocPlan.conflict(team, courseGroup)){
                 return courseGroup;
             }
         }
@@ -150,10 +150,10 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
      * @param course
      * @return
      */
-    private List<CourseGroup> findPossibileCourseGroups(CourseRegistration singleRegistration, Course course){
+    private List<CourseGroup> findPossibileCourseGroups(CourseRegistration singleRegistration, Course course, AllocationPlan allocPlan){
         List<CourseGroup> groups = new ArrayList<>();
         for(CourseGroup g : course.getCourseGroups()){
-            if(!conflict(singleRegistration,g)){
+            if(!allocPlan.conflict(singleRegistration, g)){
                 groups.add(g);
             }
         }
@@ -172,6 +172,16 @@ public class SimpleGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationP
     @Override
     public Map<Course,List<Team>> getNotMatchableTeams() {
         return this.notMatchableTeams;
+    }
+
+    @Override
+    public Map<Course, Integer> getTeamPreservations() {
+        return null;
+    }
+
+    @Override
+    public int getNumberOfTeamPreservations() {
+        return 0;
     }
 
 }

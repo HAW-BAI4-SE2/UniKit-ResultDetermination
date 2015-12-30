@@ -9,6 +9,7 @@ import net.unikit.result_determination.models.implementations.algorithms.SecondE
 import net.unikit.result_determination.models.implementations.dummys.DummyDataGenerator;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
+import net.unikit.result_determination.models.interfaces.AllocationPlanAlgorithm;
 import org.junit.Test;
 
 import java.util.List;
@@ -18,10 +19,10 @@ import java.util.List;
  */
 public class SecondExtendedGreedyAllocationPlanAlgorithmTest extends TestCase {
     DummyDataGenerator dummyDataGenerator;
-    int numberOfStudents = 30000;
+    int numberOfStudents;
 
     public void setUp() throws Exception {
-//        int numberOfStudents = 12;
+        numberOfStudents = 48;
         dummyDataGenerator = new DummyDataGenerator(numberOfStudents,numberOfStudents/3);
         dummyDataGenerator.buildTeamAndRegister();
     }
@@ -35,7 +36,7 @@ public class SecondExtendedGreedyAllocationPlanAlgorithmTest extends TestCase {
         List<Course> courses = dummyDataGenerator.getDummyCourses();
 
         /* The Algorithm that does the work */
-        SecondExtendedGreedyAllocationPlanAlgorithm allocPlanAlgorithm = new SecondExtendedGreedyAllocationPlanAlgorithm();
+        AllocationPlanAlgorithm allocPlanAlgorithm = new SecondExtendedGreedyAllocationPlanAlgorithm();
         AllocationPlan allocPlan = null;
         // *************************** start *************************************
 
@@ -43,28 +44,37 @@ public class SecondExtendedGreedyAllocationPlanAlgorithmTest extends TestCase {
 //        allocPlan.exportAsCSV(new File("C:"+File.separator+"Users"+ File.separator + "abq307.INFORMATIK"+File.separator+"Desktop"+File.separator+"AllocPlanTest.txt"));
 
         for(int i=0; i<100; i++){
+            System.out.println("****************************** START ALGORITHM ******************************");
             int notMatchable=0;
-            int numberOfDestroyedTeams=0;
+            int numberOfRegistrations=0;
+            int numberOfTeamRegistrations = 0;
+
             allocPlanAlgorithm = new SecondExtendedGreedyAllocationPlanAlgorithm();
             allocPlan = allocPlanAlgorithm.calculateAllocationPlan(courses);
 
+            System.out.println("\n***** Kurs-Ergebnisse *****");
             for(Course course : courses){
-                System.out.println("\n*** "+course.getName()+" ***");
-                System.out.println("NOT MATCHABLE TEAMS : "+allocPlanAlgorithm.getNotMatchableTeams().get(course));
+                System.out.println("\nKurs: "+course.getName());
+                System.out.println("NotMatchable: "+allocPlanAlgorithm.getNotMatchableTeams().get(course));
 
-                for(Team team : course.getTeams()){
-                    if(!teamPreservation(team,allocPlan)){
-
-                    }
+                for(Team t: course.getTeams()){
+                    numberOfRegistrations+=t.getTeamRegistrations().size();
                 }
 
+                numberOfTeamRegistrations += course.getTeams().size();
                 notMatchable += allocPlanAlgorithm.getNotMatchableTeams().get(course).size();
                 for(CourseGroup courseGroup : course.getCourseGroups()){
-                    System.out.println(courseGroup + " Teilnehmer: " + allocPlan.getCourseRegistrations(courseGroup) + allocPlan.getTeamRegistrations(courseGroup));
+                    System.out.println(courseGroup + " Teilnehmer: " + (allocPlan.getCourseRegistrations(courseGroup).size() + allocPlan.getTeamRegistrations(courseGroup).size()));
                 }
             }
 
-            System.out.println("************************************************ Ergebnis: " + notMatchable + " von " + (numberOfStudents/2)*3 + "**********************************************************");
+            System.out.println("\n***** Globales Ergebnis *****");
+            System.out.println("Studenten: " + numberOfStudents +
+                    "\nVeranstaltungen: " + courses.size() +
+                    "\nAnmeldungen: " + numberOfRegistrations +
+                    "\nErhaltenen Teams: " + allocPlanAlgorithm.getNumberOfTeamPreservations() + " von " + numberOfTeamRegistrations +
+                    "\nNotMatchable global: " + notMatchable + " von " + numberOfRegistrations);
+            System.out.println("****************************** END ALGORITHM ******************************");
         }
 
         /*
@@ -88,17 +98,6 @@ public class SecondExtendedGreedyAllocationPlanAlgorithmTest extends TestCase {
 
 
 //        assertTrue(!allocPlanAlgorithm.getNotMatchable().isEmpty());
-    }
-
-    private boolean teamPreservation(Team team, AllocationPlan plan) throws CourseGroupDoesntExistException {
-            Course course = team.getCourse();
-            for(TeamRegistration t1 : team.getTeamRegistrations()){
-                for(TeamRegistration t2 : team.getTeamRegistrations()){
-
-                }
-            }
-
-            return false;
     }
 
     private boolean isPartOfOnlyOneCourseGroup(Course course, TeamRegistration singleReg, AllocationPlan allocPlan) throws CourseGroupDoesntExistException {

@@ -9,13 +9,14 @@ import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsEx
 import net.unikit.result_determination.models.implementations.AllocationPlanImpl;
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
+import net.unikit.result_determination.models.interfaces.AllocationPlanAlgorithm;
 
 import java.util.*;
 
 /**
  * Created by abq307 on 26.11.2015.
  */
-public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocationPlanAlgorithm {
+public class ExtendedGreedyAllocationPlanAlgorithmImpl implements AllocationPlanAlgorithm {
 
     private AlgorithmSettings settings;
     private Map<Course,List<CourseRegistration>> notMatchable;
@@ -37,12 +38,12 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
     /*
         TODO Man könnte die Laufzeit hier wahrscheinlich noch ein wenig verkürzen
      */
-    private void calculateConflictsBetweenCourses(List<Course> courses) {
+    private void calculateConflictsBetweenCourses(List<Course> courses, AllocationPlan allocPlan) {
         for(Course course : courses){
             List<Course> possibileConflicts = new ArrayList<>();
 
             for(Course otherCourse : courses){
-                if(!course.equals(otherCourse) && conflict(course,otherCourse)){
+                if(!course.equals(otherCourse) && allocPlan.conflict(course, otherCourse)){
                     possibileConflicts.add(otherCourse);
                 }
             }
@@ -60,9 +61,9 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
 
         AllocationPlan allocPlan = new AllocationPlanImpl(courses);
         // Check, if there are enough available slots to assign each Student to a courseGroup
-        checkAvailableSlots(courses);
+        AlgorithmUtils.checkAvailableSlots(courses);
 
-        calculateConflictsBetweenCourses(courses);
+        calculateConflictsBetweenCourses(courses, allocPlan);
         System.out.println("***** START ALGORITHM *****");
         /*
          * The Algorithm:
@@ -90,7 +91,7 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
         List<CourseRegistration> singleRegistrations = course.getSingleRegistrations();
         Collections.shuffle(singleRegistrations); // Keinen Studenten bevorzugen
 
-        calculateDangerValues(singleRegistrations, course); //
+        calculateDangerValues(singleRegistrations, course, allocPlan); //
 
 
         for(CourseRegistration singleRegistration :singleRegistrations){
@@ -99,8 +100,8 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
 
             if(courseGroup != null){
                 // Wenn eine konfliktfreie Gruppe gefunden wurde, können wir diese dem Studenten zuweisen
-                if(!conflict(singleRegistration,courseGroup)){
-                    registerStudent(singleRegistration, courseGroup, allocPlan);
+                if(!allocPlan.conflict(singleRegistration, courseGroup)){
+                    allocPlan.registerStudent(singleRegistration, courseGroup);
                     courseGroupChanged=true;
                 }
                 /*
@@ -108,14 +109,14 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
                  */
                 else{
                     // Liefert eine leere Liste oder alle Gruppen in denen der Termin gültig wäre (können allerdings schon voll sein)
-                    List<CourseGroup> possibileCourseGroups = findAlternativeCourseGroups(singleRegistration, course); // TODO könnte man sich auch vorher bereits speichern während findCourseGroupFor
+                    List<CourseGroup> possibileCourseGroups = findAlternativeCourseGroups(singleRegistration, course, allocPlan); // TODO könnte man sich auch vorher bereits speichern während findCourseGroupFor
 
                     for(CourseGroup possibileGroup : possibileCourseGroups){
                         CourseRegistration changeableStudent = findChangeableStudent(possibileGroup, courseGroup, allocPlan);
                         if(changeableStudent != null){
-                            removeStudent(changeableStudent,possibileGroup,allocPlan);
-                            registerStudent(changeableStudent, courseGroup, allocPlan);
-                            registerStudent(singleRegistration,possibileGroup,allocPlan);
+                            allocPlan.removeStudent(changeableStudent, possibileGroup);
+                            allocPlan.registerStudent(changeableStudent, courseGroup);
+                            allocPlan.registerStudent(singleRegistration, possibileGroup);
                             courseGroupChanged=true;
                             break;
                         }
@@ -135,7 +136,7 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
         CourseRegistration changeAbleStudent = null;
         List<CourseRegistration> courseRegistrations = allocPlan.getCourseRegistrations(from);
         for(CourseRegistration courseRegistration : courseRegistrations) {
-            if (!conflict(courseRegistration, to)) {
+            if (!allocPlan.conflict(courseRegistration, to)) {
                 changeAbleStudent = courseRegistration;
                 break;
             }
@@ -173,7 +174,7 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
         CourseGroup group = null;
         for(CourseGroup courseGroup : course.getCourseGroups()){
             boolean notFull = !allocPlan.isCourseGroupFull(courseGroup);
-            boolean noConflict = !conflict(singleRegistration, courseGroup);
+            boolean noConflict = !allocPlan.conflict(singleRegistration, courseGroup);
             if(notFull){
                 group = courseGroup;
             }
@@ -192,10 +193,10 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
      * @param course
      * @return
      */
-    private List<CourseGroup> findAlternativeCourseGroups(CourseRegistration singleRegistration, Course course){
+    private List<CourseGroup> findAlternativeCourseGroups(CourseRegistration singleRegistration, Course course, AllocationPlan allocPlan){
         List<CourseGroup> groups = new ArrayList<>();
         for(CourseGroup g : course.getCourseGroups()){
-            if(!conflict(singleRegistration,g)){
+            if(!allocPlan.conflict(singleRegistration, g)){
                 groups.add(g);
             }
         }
@@ -216,11 +217,21 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
         return null;
     }
 
+    @Override
+    public Map<Course, Integer> getTeamPreservations() {
+        return null;
+    }
+
+    @Override
+    public int getNumberOfTeamPreservations() {
+        return 0;
+    }
+
     /*
      * Calculates the Danger-Value of alle registrations
      * TODO Not Finished!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
      */
-    private void calculateDangerValues(List<CourseRegistration> singleRegistrations, Course course) {
+    private void calculateDangerValues(List<CourseRegistration> singleRegistrations, Course course, AllocationPlan allocPlan) {
         /*
          * Für alle Registrierungen die im aktuellen Kurs gemacht wurden
          */
@@ -228,7 +239,7 @@ public class ExtendedGreedyAllocationPlanAlgorithmImpl extends AbstractAllocatio
             int numberOfPotentialConflictingCourses = 0;
             for(CourseRegistration creg1 : courseRegistration.getStudent().getCourseRegistrations()){ // TODO Was passiert mit CourseRegistrations, die abgeschlossen sind? An dieser Stelle interessiert mich nur, für welche Kurse sich der Student aktuell angemeldet hat
                 for(CourseRegistration creg2 : courseRegistration.getStudent().getCourseRegistrations()){
-                    if(conflict(creg1.getCourse(),creg2.getCourse())){
+                    if(allocPlan.conflict(creg1.getCourse(), creg2.getCourse())){
                         numberOfPotentialConflictingCourses++;
                     }
                 }

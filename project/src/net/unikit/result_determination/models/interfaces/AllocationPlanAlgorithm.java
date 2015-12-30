@@ -22,9 +22,13 @@ public interface AllocationPlanAlgorithm {
      * @param courses the courses, for which the allocations will be created
      * @return the AllocationPlan
      */
-    public AllocationPlan calculateAllocationPlan(List<Course> courses) throws NotEnoughCourseGroupsException, CourseGroupDoesntExistException;
+    AllocationPlan calculateAllocationPlan(List<Course> courses) throws NotEnoughCourseGroupsException, CourseGroupDoesntExistException;
 
-    public Map<Course,List<CourseRegistration>> getNotMatchable();
+    Map<Course,List<CourseRegistration>> getNotMatchable();
 
-    public Map<Course,List<Team>> getNotMatchableTeams();
+    Map<Course,List<Team>> getNotMatchableTeams();
+
+    Map<Course, Integer> getTeamPreservations();
+
+    int getNumberOfTeamPreservations();
 }
