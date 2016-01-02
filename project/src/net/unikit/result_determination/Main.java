@@ -17,22 +17,6 @@ public class Main {
         try {
             ResultDeterminationController resController = new ResultDeterminationController();
 
-
-            AlgorithmSettings settings = new AlgorithmSettings() {
-                @Override
-                public int hashCode() {
-                    return super.hashCode();
-                }
-            };
-
-            try {
-                resController.createAllocationPlan(settings);
-            } catch (NotEnoughCourseGroupsException e) {
-                e.printStackTrace();
-            } catch (CourseGroupDoesntExistException e) {
-                e.printStackTrace();
-            }
-
         } catch (IOException e) {
             e.printStackTrace();
         }

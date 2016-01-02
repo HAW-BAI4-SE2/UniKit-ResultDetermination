@@ -7,12 +7,14 @@ import net.unikit.database.interfaces.DatabaseManager;
 import net.unikit.database.interfaces.entities.Course;
 import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistException;
 import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
-import net.unikit.result_determination.models.implementations.algorithms.SimpleGreedyAllocationPlanAlgorithmImpl;
+import net.unikit.result_determination.models.implementations.algorithms.SecondExtendedGreedyAllocationPlanAlgorithm;
 import net.unikit.result_determination.models.implementations.dummys.DummyDataGenerator;
-import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
 import net.unikit.result_determination.models.interfaces.AllocationPlanAlgorithm;
+import net.unikit.result_determination.view.AllocationPlanAlgorithmUI;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -32,6 +34,7 @@ import java.util.Properties;
 public class ResultDeterminationController{
     private DatabaseManager dbmanager;
     private DummyDataGenerator dummyDataGenerator;
+    private AllocationPlanAlgorithmUI ui;
 
     /**
      * Initializes the Object
@@ -40,22 +43,40 @@ public class ResultDeterminationController{
     public ResultDeterminationController() throws IOException {
 //        initDatabaseManager(); // TODO zurzeit kam hier noch eine UnsupportedOperationException -> muss Andi noch implementieren
         dummyDataGenerator = new DummyDataGenerator(48,16); // 3*16 Studenten. -> Es gibt pro Kurs 3 Gruppen a 16 Studenten
+        ui = new AllocationPlanAlgorithmUI();
+        ui.showUI();
+        addUIListener();
+    }
+
+    private void addUIListener() {
+        ui.getCreateAllocationPlanMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    AllocationPlan allocationPlan = createAllocationPlan();
+                    ui.addDefaultBarChart();
+                } catch (NotEnoughCourseGroupsException e1) {
+                    e1.printStackTrace();
+                } catch (CourseGroupDoesntExistException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
      * Creates the AllocationPlan
-     * @param algorithmSettings the settings which affect the algorithms behavier
      * @return the AllocationPlan
      * @ensure Every student will be assigned to a courseGroup. It could be possible that some teams have to be splitted to ensure that.
      */
-    public AllocationPlan createAllocationPlan(AlgorithmSettings algorithmSettings) throws NotEnoughCourseGroupsException, CourseGroupDoesntExistException {
+    public AllocationPlan createAllocationPlan() throws NotEnoughCourseGroupsException, CourseGroupDoesntExistException {
 
         /*  All courses for which the allocations shall be created  */
         //List<Course> courses = dbmanager.getCourseManager().getAllEntities(); --> wird später verwendet!!! Erstmal nur mit Dummys arbeiten!
         List<Course> courses = dummyDataGenerator.getDummyCourses();
 
         /* The Algorithm that does the work */
-        AllocationPlanAlgorithm allocPlanAlgorithm = new SimpleGreedyAllocationPlanAlgorithmImpl(algorithmSettings);
+        AllocationPlanAlgorithm allocPlanAlgorithm = new SecondExtendedGreedyAllocationPlanAlgorithm();
 
         // *************************** Idee 1 *************************************
         AllocationPlan allocPlan = allocPlanAlgorithm.calculateAllocationPlan(courses);

@@ -7,6 +7,7 @@ import net.unikit.result_determination.models.implementations.AllocationPlanImpl
 import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
 import net.unikit.result_determination.models.interfaces.AllocationPlanAlgorithm;
+import net.unikit.result_determination.utils.AlgorithmUtils;
 
 import java.util.*;
 

@@ -1,4 +1,4 @@
-package net.unikit.result_determination.models.implementations.algorithms;
+package net.unikit.result_determination.utils;
 
 import net.unikit.database.interfaces.entities.Course;
 import net.unikit.database.interfaces.entities.CourseGroup;

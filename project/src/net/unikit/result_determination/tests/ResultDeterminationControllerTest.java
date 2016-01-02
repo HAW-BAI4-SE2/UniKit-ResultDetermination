@@ -32,7 +32,7 @@ public class ResultDeterminationControllerTest {
      */
     public void testCreateAllocationPlan() throws Exception {
         AlgorithmSettings settings = new AlgorithmSettingsImpl();
-        AllocationPlan allocPlan = controller.createAllocationPlan(settings);
+        AllocationPlan allocPlan = controller.createAllocationPlan();
 
         assertTrue(allocPlan != null);
     }
