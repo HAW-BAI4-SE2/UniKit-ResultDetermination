@@ -16,14 +16,9 @@ import org.jfree.data.general.DefaultPieDataset;
 
 import java.awt.BorderLayout;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import java.awt.GridBagLayout;
 import java.util.List;
 
@@ -33,6 +28,13 @@ public class AllocationPlanAlgorithmUI
 
     private JPanel contentPane;
     private JPanel diagramPane;
+    private JPanel diagramPaneLeftNorth;
+    private JPanel diagramPaneLeftSouth;
+    private JPanel diagramPaneRightNorth;
+    private JPanel diagramPaneRightSouth;
+    private JSplitPane diagramSplitPane;
+    private JSplitPane diagramPaneLeft;
+    private JSplitPane diagramPaneRight;
     private JTable resultTable;
     private JFrame frame;
     private JMenuItem createAllocationPlanMenuItem;
@@ -46,7 +48,7 @@ public class AllocationPlanAlgorithmUI
     {
         frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setBounds(100, 100, 450, 300);
+        frame.setBounds(100, 100, 650, 500);
 
         JMenuBar menuBar = new JMenuBar();
         frame.setJMenuBar(menuBar);
@@ -76,16 +78,75 @@ public class AllocationPlanAlgorithmUI
         panel.setLayout(new BorderLayout(0, 0));
 
         resultTable = new JTable();
+        resultTable.setModel(new DefaultTableModel(
+                new Object[][]{
+                },
+                new String[]{
+                        "Veranstaltung", "Gruppen", "Studenten", "Teamerhaltung", "Verarbeitet"
+                }
+        ) {
+            Class[] columnTypes = new Class[]{
+                    String.class, String.class, String.class, String.class, String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return columnTypes[columnIndex];
+            }
+
+            boolean[] columnEditables = new boolean[]{
+                    true, true, false, false, false
+            };
+
+            public boolean isCellEditable(int row, int column) {
+                return columnEditables[column];
+            }
+        });
+        resultTable.getColumnModel().getColumn(0).setResizable(false);
+        resultTable.getColumnModel().getColumn(0).setPreferredWidth(88);
+        resultTable.getColumnModel().getColumn(1).setResizable(false);
+        resultTable.getColumnModel().getColumn(2).setResizable(false);
+        resultTable.getColumnModel().getColumn(3).setResizable(false);
+        resultTable.getColumnModel().getColumn(3).setPreferredWidth(100);
+        resultTable.getColumnModel().getColumn(4).setResizable(false);
+        panel.add(resultTable, BorderLayout.CENTER);
         panel.add(resultTable, BorderLayout.CENTER);
 
         diagramPane = new JPanel();
         tabbedPane.addTab("Diagramme", null, diagramPane, null);
-        GridBagLayout gbl_diagramPane = new GridBagLayout();
-        gbl_diagramPane.columnWidths = new int[]{0};
-        gbl_diagramPane.rowHeights = new int[]{0};
-        gbl_diagramPane.columnWeights = new double[]{Double.MIN_VALUE};
-        gbl_diagramPane.rowWeights = new double[]{Double.MIN_VALUE};
-        diagramPane.setLayout(gbl_diagramPane);
+        diagramPane.setLayout(new BorderLayout(0, 0));
+
+        diagramSplitPane = new JSplitPane();
+        diagramSplitPane.setDividerSize(1);
+        diagramPane.add(diagramSplitPane, BorderLayout.CENTER);
+
+        diagramPaneLeft = new JSplitPane();
+        diagramPaneLeft.setDividerSize(1);
+        diagramPaneLeft.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        diagramSplitPane.setLeftComponent(diagramPaneLeft);
+
+        diagramPaneLeftNorth = new JPanel();
+        diagramPaneLeft.setLeftComponent(diagramPaneLeftNorth);
+        diagramPaneLeftNorth.setLayout(new BorderLayout(0, 0));
+
+        diagramPaneLeftSouth = new JPanel();
+        diagramPaneLeft.setRightComponent(diagramPaneLeftSouth);
+        diagramPaneLeftSouth.setLayout(new BorderLayout(0, 0));
+        diagramPaneLeft.setDividerLocation(90);
+
+        diagramPaneRight = new JSplitPane();
+        diagramPaneRight.setDividerSize(1);
+        diagramPaneRight.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        diagramSplitPane.setRightComponent(diagramPaneRight);
+
+        diagramPaneRightSouth = new JPanel();
+        diagramPaneRight.setRightComponent(diagramPaneRightSouth);
+        diagramPaneRightSouth.setLayout(new BorderLayout(0, 0));
+
+        diagramPaneRightNorth = new JPanel();
+        diagramPaneRight.setLeftComponent(diagramPaneRightNorth);
+        diagramPaneRightNorth.setLayout(new BorderLayout(0, 0));
+        diagramPaneRight.setDividerLocation(90);
+        diagramSplitPane.setDividerLocation(200);
 
         frame.setLocationRelativeTo(null);
     }
@@ -197,7 +258,7 @@ public class AllocationPlanAlgorithmUI
         JFreeChart barChart = ChartFactory.createPieChart("Ergebnisse",dataset);
 
         ChartPanel chartPanel = new ChartPanel(barChart);
-        diagramPane.add(chartPanel);
+        diagramPaneLeftNorth.add(chartPanel);
         frame.pack();
         frame.setLocationRelativeTo(null);
     }
