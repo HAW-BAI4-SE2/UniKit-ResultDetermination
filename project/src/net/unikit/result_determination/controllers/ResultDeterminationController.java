@@ -6,6 +6,7 @@ import net.unikit.database.interfaces.DatabaseConfiguration;
 import net.unikit.database.interfaces.DatabaseManager;
 import net.unikit.database.interfaces.entities.Course;
 import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistException;
+import net.unikit.result_determination.models.exceptions.NoTeamRegistrationsFoundException;
 import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
 import net.unikit.result_determination.models.implementations.algorithms.SecondExtendedGreedyAllocationPlanAlgorithm;
 import net.unikit.result_determination.models.implementations.dummys.DummyDataGenerator;
@@ -43,6 +44,7 @@ public class ResultDeterminationController{
     public ResultDeterminationController() throws IOException {
 //        initDatabaseManager(); // TODO zurzeit kam hier noch eine UnsupportedOperationException -> muss Andi noch implementieren
         dummyDataGenerator = new DummyDataGenerator(48,16); // 3*16 Studenten. -> Es gibt pro Kurs 3 Gruppen a 16 Studenten
+        dummyDataGenerator.buildTeamAndRegister();
         ui = new AllocationPlanAlgorithmUI();
         ui.showUI();
         addUIListener();
@@ -54,10 +56,11 @@ public class ResultDeterminationController{
             public void actionPerformed(ActionEvent e) {
                 try {
                     AllocationPlan allocationPlan = createAllocationPlan();
-                    ui.addDefaultBarChart();
                 } catch (NotEnoughCourseGroupsException e1) {
                     e1.printStackTrace();
                 } catch (CourseGroupDoesntExistException e1) {
+                    e1.printStackTrace();
+                } catch (NoTeamRegistrationsFoundException e1) {
                     e1.printStackTrace();
                 }
             }
@@ -69,7 +72,7 @@ public class ResultDeterminationController{
      * @return the AllocationPlan
      * @ensure Every student will be assigned to a courseGroup. It could be possible that some teams have to be splitted to ensure that.
      */
-    public AllocationPlan createAllocationPlan() throws NotEnoughCourseGroupsException, CourseGroupDoesntExistException {
+    public AllocationPlan createAllocationPlan() throws NotEnoughCourseGroupsException, CourseGroupDoesntExistException, NoTeamRegistrationsFoundException {
 
         /*  All courses for which the allocations shall be created  */
         //List<Course> courses = dbmanager.getCourseManager().getAllEntities(); --> wird später verwendet!!! Erstmal nur mit Dummys arbeiten!
@@ -81,6 +84,7 @@ public class ResultDeterminationController{
         // *************************** Idee 1 *************************************
         AllocationPlan allocPlan = allocPlanAlgorithm.calculateAllocationPlan(courses);
 
+        ui.updateAllocationPlanDiagram(courses,allocPlan,allocPlanAlgorithm);
         return allocPlan;
     }
 

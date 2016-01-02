@@ -4,6 +4,7 @@ import net.unikit.database.interfaces.entities.Course;
 import net.unikit.database.interfaces.entities.CourseGroup;
 import net.unikit.database.interfaces.entities.Team;
 import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistException;
+import net.unikit.result_determination.models.exceptions.NoTeamRegistrationsFoundException;
 import net.unikit.result_determination.models.interfaces.AllocationPlan;
 import net.unikit.result_determination.models.interfaces.AllocationPlanAlgorithm;
 import org.jfree.chart.ChartFactory;
@@ -11,6 +12,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
 
 import java.awt.BorderLayout;
 
@@ -147,7 +149,7 @@ public class AllocationPlanAlgorithmUI
         frame.setLocationRelativeTo(null);
     }
 
-    public void updateAllocationPlanDiagram(List<Course> courses,AllocationPlan allocPlan, AllocationPlanAlgorithm allocPlanAlgorithm) throws CourseGroupDoesntExistException {
+    public void updateAllocationPlanDiagram(List<Course> courses, AllocationPlan allocPlan, AllocationPlanAlgorithm allocPlanAlgorithm) throws CourseGroupDoesntExistException, NoTeamRegistrationsFoundException {
         int notMatchable=0;
         int numberOfRegistrations=0;
         int numberOfTeamRegistrations = 0;
@@ -173,19 +175,30 @@ public class AllocationPlanAlgorithmUI
         System.out.println("****************************** END ALGORITHM ******************************");
 
 
-        final String fiat = "FIAT";
-        final String audi = "AUDI";
-        final String ford = "FORD";
-        final String speed = "Speed";
-        final String millage = "Millage";
-        final String userrating = "User Rating";
-        final String safety = "safety";
+        final String teamPreservation = "Teamerhaltung";
+        final String preservations = "Erhaltene Teams";
+        final String destroyedTeams = "Zerstörte Teams";
+        final String registeredTeams = "Angemeldete Teams";
 
-        final DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
+        final String anzahlNotMatchable = "Unverarbeitet";
+        final String registrations = "Anmeldungen";
 
-        dataset.addValue( 1.0 , fiat , speed );
-        dataset.addValue( 3.0 , fiat , userrating );
-        dataset.addValue( 5.0 , fiat , millage );
-        dataset.addValue( 5.0 , fiat , safety );
+        if(numberOfTeamRegistrations==0){
+            throw new NoTeamRegistrationsFoundException();
+        }
+
+        double pres = Math.abs((double)allocPlanAlgorithm.getNumberOfTeamPreservations()/(double)numberOfTeamRegistrations)*100;
+        double del = ((double)(numberOfTeamRegistrations-allocPlanAlgorithm.getNumberOfTeamPreservations())/numberOfTeamRegistrations)*100;
+
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        dataset.setValue(preservations,pres);
+        dataset.setValue(destroyedTeams,del);
+
+        JFreeChart barChart = ChartFactory.createPieChart("Ergebnisse",dataset);
+
+        ChartPanel chartPanel = new ChartPanel(barChart);
+        diagramPane.add(chartPanel);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
     }
 }
