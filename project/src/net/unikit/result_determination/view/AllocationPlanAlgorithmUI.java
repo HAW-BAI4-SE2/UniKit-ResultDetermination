@@ -42,6 +42,7 @@ public class AllocationPlanAlgorithmUI {
     private JFrame frame;
     private JMenuItem createAllocationPlanMenuItem;
     private JMenuItem exportAllocationPlanMenuItem;
+    private JMenuItem autoFixAllocationPlanMenuItem;
 
     final String teamPreservation = "Teamerhaltung";
     final String preservations = "Erhaltene Teams";
@@ -106,6 +107,10 @@ public class AllocationPlanAlgorithmUI {
 
     public JMenuItem getCreateAllocationPlanMenuItem() {
         return createAllocationPlanMenuItem;
+    }
+
+    public JMenuItem getAutoFixAllocationPlanMenuItem() {
+        return autoFixAllocationPlanMenuItem;
     }
 
     public JMenuItem getExportAllocationPlanMenuItem() {
@@ -210,8 +215,8 @@ public class AllocationPlanAlgorithmUI {
     }
 
     /*
-     * Initializes the Menu
-     */
+         * Initializes the Menu
+         */
     private void initMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         frame.setJMenuBar(menuBar);
@@ -221,6 +226,9 @@ public class AllocationPlanAlgorithmUI {
 
         createAllocationPlanMenuItem = new JMenuItem("Erstellen");
         allocationPlanMenu.add(createAllocationPlanMenuItem);
+
+        autoFixAllocationPlanMenuItem = new JMenuItem("Automatische Konfliktbehebung starten");
+        allocationPlanMenu.add(autoFixAllocationPlanMenuItem);
 
         exportAllocationPlanMenuItem = new JMenuItem("Exportieren");
         allocationPlanMenu.add(exportAllocationPlanMenuItem);

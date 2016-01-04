@@ -1,6 +1,5 @@
 package net.unikit.result_determination.controllers;
 
-import com.sun.deploy.panel.JreTableModel;
 import net.unikit.database.implementations.DatabaseConfigurationUtils;
 import net.unikit.database.implementations.DatabaseManagerFactory;
 import net.unikit.database.interfaces.DatabaseConfiguration;
@@ -81,7 +80,8 @@ public class NewResultDeterminationController {
                                 "\nMöchten Sie, dass automatisch nach einer Belegung gesucht wird?" +
                                 "\n(Warnung! Dies kann dazu führen, dass die Gruppengrößen verändert werden!)");
                         if(option == 0){
-                            ui.getExportAllocationPlanMenuItem().doClick();
+                            allocPlanAlgorithm.fixNotMatchables(courses,allocationPlan);
+                            ui.updateUI(allocationPlan);
                         }
                     }
                 } catch (NotEnoughCourseGroupsException e1) {
@@ -96,13 +96,22 @@ public class NewResultDeterminationController {
             }
         });
 
-        ui.getExportAllocationPlanMenuItem().addActionListener(new ActionListener() {
+        ui.getAutoFixAllocationPlanMenuItem().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
+
                     if(allocationPlan != null){
-                        allocPlanAlgorithm.fixNotMatchables(courses,allocationPlan);
-                        ui.updateUI(allocationPlan);
+                        if(allocationPlan.getNumberOfNotMatchableRegistrations() != 0){
+                            int option = JOptionPane.showConfirmDialog(ui.getFrame(),"Das Ergebnis ist nicht perfekt. " +
+                                    "\nEs konnte nicht für alle Registrierungen eine passende Gruppe gefunden werden." +
+                                    "\nMöchten Sie, dass automatisch nach einer Belegung gesucht wird?" +
+                                    "\n(Warnung! Dies kann dazu führen, dass die Gruppengrößen verändert werden!)");
+                            if(option == 0){
+                                allocPlanAlgorithm.fixNotMatchables(courses,allocationPlan);
+                                ui.updateUI(allocationPlan);
+                            }
+                        }
                     }
                 } catch (CourseGroupDoesntExistException e1) {
                     e1.printStackTrace();
@@ -154,7 +163,7 @@ public class NewResultDeterminationController {
         UnassignedStudentsTableModel unassignedTableModel = new UnassignedStudentsTableModel(course.getNotMatchableTeamRegistrations());
         courseFocus.getUnassignedStudentsTable().setModel(unassignedTableModel);
         courseFocus.getUnassignedStudentsTable().setRowSorter(new TableRowSorter<>(unassignedTableModel));
-        System.out.println("GetAutoSolutionButton pressed");
+
         courseFocus.getAutoSolutionButton().addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -162,7 +171,7 @@ public class NewResultDeterminationController {
                     System.out.println("GetAutoSolutionButton pressed");
                     allocPlanAlgorithm.fixNotMatchables(course,allocationPlan);
                     ui.updateUI(allocationPlan);
-                    courseFocus.updateUI(course,allocPlanAlgorithm.getStudentsCourseGroups());
+                    courseFocus.updateUI(course, allocPlanAlgorithm.getStudentsCourseGroups());
                 } catch (CourseGroupFullException e1) {
                     e1.printStackTrace();
                 } catch (CourseGroupDoesntExistException e1) {
