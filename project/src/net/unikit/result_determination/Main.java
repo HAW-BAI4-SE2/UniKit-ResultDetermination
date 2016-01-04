@@ -1,5 +1,6 @@
 package net.unikit.result_determination;
 
+import net.unikit.result_determination.controllers.NewResultDeterminationController;
 import net.unikit.result_determination.controllers.ResultDeterminationController;
 import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistException;
 import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
@@ -15,7 +16,8 @@ public class Main {
 
         System.out.println("********* Start Programm *********");
         try {
-            ResultDeterminationController resController = new ResultDeterminationController();
+//            ResultDeterminationController resController = new ResultDeterminationController();
+            NewResultDeterminationController resController = new NewResultDeterminationController();
 
         } catch (IOException e) {
             e.printStackTrace();

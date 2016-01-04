@@ -125,7 +125,7 @@ public class SecondExtendedGreedyAllocationPlanAlgorithm implements AllocationPl
     }
 
     /**
-     * Tries to find a possibile CourseGroup for one CourseRegistration
+     * Tries to find a possibile CourseGroup for a team
      * @param team the Team
      * @param course the course
      */

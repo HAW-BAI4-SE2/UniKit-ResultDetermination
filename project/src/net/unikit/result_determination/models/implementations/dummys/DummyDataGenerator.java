@@ -15,6 +15,8 @@ public class DummyDataGenerator {
     List<CourseRegistration> courseRegistrations;
     List<Team> teams;
     Map<String,CourseGroupAppointment> dummyAppointmentMap;
+    private int numberOfRegistrations;
+    private int numberOfTeams;
 
     /**
      * Initializes the Object
@@ -26,6 +28,8 @@ public class DummyDataGenerator {
         teams = new ArrayList<>();
         students = new ArrayList<>();
         dummyAppointmentMap = new HashMap<>();
+        numberOfRegistrations=0;
+        numberOfTeams=0;
 
         /*
          * Reihenfolge muss sein:
@@ -52,6 +56,10 @@ public class DummyDataGenerator {
 
     public List<Team> getTeams(){
         return teams;
+    }
+
+    public int getNumberOfTeams(){
+        return numberOfTeams;
     }
 
     /*
@@ -197,6 +205,7 @@ public class DummyDataGenerator {
         for(Course c : courses){
             List<CourseRegistration> singleRegistrations = c.getSingleRegistrations();
             for (Student s : students){
+                numberOfRegistrations++;
                 CourseRegistration singleRegistration = new DummyCourseRegistrationImpl(s,c);
                 singleRegistrations.add(singleRegistration);
                 ((DummyStudentImpl)s).addCourseRegistration(singleRegistration);
@@ -220,7 +229,9 @@ public class DummyDataGenerator {
             for(int i=0; i< c.getSingleRegistrations().size()/c.getMaxTeamSize();i++){
                 Team t = new DummyTeamImpl(c);
                 teams.add(t);
+                numberOfTeams++;
             }
+//            numberOfRegistrations+= singleRegistrations.size();
 
             for(CourseRegistration courseRegistration : singleRegistrations){
                 Student s = courseRegistration.getStudent();
@@ -276,5 +287,9 @@ public class DummyDataGenerator {
             }
         }
         return t;
+    }
+
+    public int getNumberOfRegistrations() {
+        return numberOfRegistrations;
     }
 }
