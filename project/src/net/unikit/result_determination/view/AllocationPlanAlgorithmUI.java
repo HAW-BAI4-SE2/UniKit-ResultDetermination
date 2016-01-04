@@ -1,15 +1,7 @@
 package net.unikit.result_determination.view;
 
-import net.unikit.database.interfaces.entities.Course;
-import net.unikit.database.interfaces.entities.CourseGroup;
-import net.unikit.database.interfaces.entities.Team;
-import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistException;
-import net.unikit.result_determination.models.exceptions.NoTeamRegistrationsFoundException;
-import net.unikit.result_determination.models.implementations.AlgorithmResultTableModel;
 import net.unikit.result_determination.models.implementations.ExtendedCourse;
 import net.unikit.result_determination.models.implementations.NewAllocationPlan;
-import net.unikit.result_determination.models.interfaces.AllocationPlan;
-import net.unikit.result_determination.models.interfaces.AllocationPlanAlgorithm;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -20,10 +12,7 @@ import java.awt.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.JTableHeader;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class AllocationPlanAlgorithmUI {

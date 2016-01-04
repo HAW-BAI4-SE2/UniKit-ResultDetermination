@@ -5,6 +5,7 @@ import net.unikit.database.implementations.DatabaseManagerFactory;
 import net.unikit.database.interfaces.DatabaseConfiguration;
 import net.unikit.database.interfaces.DatabaseManager;
 import net.unikit.database.interfaces.entities.Course;
+import net.unikit.database.interfaces.entities.TeamRegistration;
 import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistException;
 import net.unikit.result_determination.models.exceptions.CourseGroupFullException;
 import net.unikit.result_determination.models.exceptions.NoTeamRegistrationsFoundException;
@@ -13,8 +14,7 @@ import net.unikit.result_determination.models.implementations.*;
 import net.unikit.result_determination.models.implementations.algorithms.GreedyAllocationPlanAlgorithm;
 import net.unikit.result_determination.models.implementations.dummys.DummyDataGenerator;
 import net.unikit.result_determination.utils.AlgorithmUtils;
-import net.unikit.result_determination.view.AllocationPlanAlgorithmUI;
-import net.unikit.result_determination.view.CourseFocusUI;
+import net.unikit.result_determination.view.*;
 
 import javax.swing.*;
 import javax.swing.table.TableRowSorter;
@@ -176,6 +176,34 @@ public class NewResultDeterminationController {
                     e1.printStackTrace();
                 } catch (CourseGroupDoesntExistException e1) {
                     e1.printStackTrace();
+                }
+            }
+        });
+
+        courseFocus.getManuallySolutionButton().addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JTable unassignedStudents = courseFocus.getUnassignedStudentsTable();
+                int row = unassignedStudents.getSelectedRow();
+//                    JComboBox groups = courseFocus.getCourseGroupsComboBox();
+                JTable groupTable = courseFocus.getCourseGroupsTable();
+                int groupRow = groupTable.getSelectedRow();
+
+                if(row >= 0 && groupRow >= 0){
+                    UnassignedStudentsTableModel unassignedTableModel = (UnassignedStudentsTableModel) unassignedStudents.getModel();
+                    TeamRegistration teamRegistration = unassignedTableModel.getTeamRegistration(row);
+
+                    CourseGroupTableModel courseGroupTableModel = (CourseGroupTableModel) groupTable.getModel();
+                    ExtendedCourseGroup courseGroup = courseGroupTableModel.getCourseGroup(groupRow);
+
+                    // extend Group size
+                    courseGroup.setMaxGroupSize(courseGroup.getMaxGroupSize() + 1);
+                    allocPlanAlgorithm.registerTeamRegistration(teamRegistration, courseGroup);
+                    course.removeNotMatchableTeamRegistration(teamRegistration);
+                    allocationPlan.setNumberOfNotMatchableRegistrations(allocationPlan.getNumberOfNotMatchableRegistrations()-1);
+
+                    ui.updateUI(allocationPlan);
+                    courseFocus.updateUI(course,allocPlanAlgorithm.getStudentsCourseGroups());
                 }
             }
         });

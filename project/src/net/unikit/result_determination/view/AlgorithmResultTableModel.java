@@ -1,5 +1,6 @@
-package net.unikit.result_determination.models.implementations;
+package net.unikit.result_determination.view;
 
+import net.unikit.result_determination.models.implementations.ExtendedCourse;
 import net.unikit.result_determination.utils.AlgorithmUtils;
 
 import javax.swing.event.TableModelListener;

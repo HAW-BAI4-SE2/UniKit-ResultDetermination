@@ -98,7 +98,7 @@ public class GreedyAllocationPlanAlgorithm {
         return allocationPlan;
     }
 
-    private void registerTeamRegistration(TeamRegistration teamRegistration, ExtendedCourseGroup possibleCourseGroup) {
+    public void registerTeamRegistration(TeamRegistration teamRegistration, ExtendedCourseGroup possibleCourseGroup) {
         try {
             possibleCourseGroup.addTeamRegistration(teamRegistration);
 

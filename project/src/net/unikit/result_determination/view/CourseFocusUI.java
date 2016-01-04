@@ -1,11 +1,8 @@
 package net.unikit.result_determination.view;
 
 import net.unikit.database.interfaces.entities.Student;
-import net.unikit.database.interfaces.entities.TeamRegistration;
-import net.unikit.result_determination.models.implementations.AssignedStudentsTableModel;
 import net.unikit.result_determination.models.implementations.ExtendedCourse;
 import net.unikit.result_determination.models.implementations.ExtendedCourseGroup;
-import net.unikit.result_determination.models.implementations.UnassignedStudentsTableModel;
 import net.unikit.result_determination.utils.AlgorithmUtils;
 
 import java.awt.*;
@@ -26,13 +23,18 @@ public class CourseFocusUI
     private final JLabel teamPreservationLabel;
     private final JLabel assignmentsLabel;
     private JLabel courseNameLabel;
-    private final JComboBox courseGroupsComboBox;
+
+//    private final JComboBox courseGroupsComboBox;
 
     private final JButton manuallySolutionButton;
 
     private JButton autoSolutionButton;
+
     private JTable assignedStudentsTable;
     private JTable unassignedStudentsTable;
+
+    private JTable courseGroupsTable;
+
     public void showUI() {
         frame.setVisible(true);
     }
@@ -87,15 +89,21 @@ public class CourseFocusUI
 
         JPanel courseGroupsPanel = new JPanel();
         optionsPanel.add(courseGroupsPanel, BorderLayout.SOUTH);
-        courseGroupsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 15));
+        courseGroupsPanel.setLayout(new BorderLayout(0,0));
 
-        courseGroupsComboBox = new JComboBox();
+//        courseGroupsComboBox = new JComboBox();
+//
+//        for(ExtendedCourseGroup courseGroup : course.getCourseGroups()){
+//            courseGroupsComboBox.addItem(courseGroup);
+//        }
+//
+//        courseGroupsPanel.add(courseGroupsComboBox);
 
-        for(ExtendedCourseGroup courseGroup : course.getCourseGroups()){
-            courseGroupsComboBox.addItem(courseGroup);
-        }
-
-        courseGroupsPanel.add(courseGroupsComboBox);
+        courseGroupsTable = new JTable(new CourseGroupTableModel(course.getCourseGroups()));
+        courseGroupsPanel.add(courseGroupsTable.getTableHeader(),BorderLayout.PAGE_START);
+        courseGroupsPanel.add(courseGroupsTable);
+        courseGroupsTable.setDragEnabled(false);
+        courseGroupsTable.setFillsViewportHeight(true);
 
         JPanel tablePanel = new JPanel();
         splitPane.setRightComponent(tablePanel);
@@ -104,6 +112,10 @@ public class CourseFocusUI
         JSplitPane studentsSplitPane = new JSplitPane();
         studentsSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
         tablePanel.add(studentsSplitPane, BorderLayout.CENTER);
+
+        JLabel tableLegend = new JLabel("Zugewiesene Studenten / Nicht zugewiesene Studenten");
+        tableLegend.setHorizontalAlignment(SwingConstants.CENTER);
+        tablePanel.add(tableLegend,BorderLayout.NORTH);
         studentsSplitPane.setDividerLocation(200);
         splitPane.setDividerLocation(150);
 
@@ -140,7 +152,6 @@ public class CourseFocusUI
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         studentsSplitPane.setRightComponent(notAssignedStudentPane);
     }
-
     public JButton getManuallySolutionButton() {
         return manuallySolutionButton;
     }
@@ -157,12 +168,24 @@ public class CourseFocusUI
         return unassignedStudentsTable;
     }
 
+    //    }
+//        return courseGroupsComboBox;
+    public JTable getCourseGroupsTable() {
+        return courseGroupsTable;
+    }
+
+//    public JComboBox getCourseGroupsComboBox() {
+
     public void updateUI(ExtendedCourse course, Map<Student, List<ExtendedCourseGroup>> studentsCourseGroups) {
 
         AssignedStudentsTableModel assignedTableModel = new AssignedStudentsTableModel(course.getAssignedTeamRegistrations(), studentsCourseGroups);
         assignedStudentsTable.setModel(assignedTableModel);
+
         UnassignedStudentsTableModel unassignedTableModel = new UnassignedStudentsTableModel(course.getNotMatchableTeamRegistrations());
         unassignedStudentsTable.setModel(unassignedTableModel);
+
+        CourseGroupTableModel courseGroupTableModel = new CourseGroupTableModel(course.getCourseGroups());
+        courseGroupsTable.setModel(courseGroupTableModel);
 
         teamPreservationLabel.setText(teamPreservation + AlgorithmUtils.round(course.getTeamPreservation(),2)+"%");
         assignmentsLabel.setText(assignments+ AlgorithmUtils.round(course.getAssignmentQuantity(), 2)+"%");

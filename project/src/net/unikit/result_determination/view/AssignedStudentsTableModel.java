@@ -1,7 +1,8 @@
-package net.unikit.result_determination.models.implementations;
+package net.unikit.result_determination.view;
 
 import net.unikit.database.interfaces.entities.Student;
 import net.unikit.database.interfaces.entities.TeamRegistration;
+import net.unikit.result_determination.models.implementations.ExtendedCourseGroup;
 import net.unikit.result_determination.utils.AlgorithmUtils;
 
 import javax.swing.table.AbstractTableModel;

@@ -1,4 +1,4 @@
-package net.unikit.result_determination.models.implementations;
+package net.unikit.result_determination.view;
 
 import net.unikit.database.interfaces.entities.Student;
 import net.unikit.database.interfaces.entities.TeamRegistration;
@@ -44,5 +44,9 @@ public class UnassignedStudentsTableModel extends AbstractTableModel {
     @Override
     public String getColumnName(int col) {
         return tableHeaders[col];
+    }
+
+    public TeamRegistration getTeamRegistration(int row){
+        return unassignedTeamRegistrations.get(row);
     }
 }
