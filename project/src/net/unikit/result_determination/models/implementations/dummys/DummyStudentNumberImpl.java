@@ -18,4 +18,5 @@ public class DummyStudentNumberImpl implements Student.StudentNumber {
     public String getValue() {
         return s;
     }
+
 }

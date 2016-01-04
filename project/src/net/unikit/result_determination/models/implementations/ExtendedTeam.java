@@ -21,6 +21,23 @@ public class ExtendedTeam {
         registrations = team.getTeamRegistrations();
     }
 
+    public boolean hasConflictWith(ExtendedCourseGroup courseGroup, Map<Student, List<ExtendedCourseGroup>> studentsCourseGroups) {
+        for (TeamRegistration teamReg : team.getTeamRegistrations()) {
+            List<ExtendedCourseGroup> studentCourseGroups = studentsCourseGroups.get(teamReg.getStudent());
+
+            if (studentCourseGroups != null) {
+                // hier wird für alle Praktikumsgruppen, in denen ein Student Mitglied ist überprüft,
+                // ob es mit der zu überprüfenden Gruppe zu einem Konflikt käme
+                for (ExtendedCourseGroup group : studentCourseGroups) {
+                    if (group.hashConflictWith(courseGroup)) { // TODO Fachrichtung und Semester beachten! Andere Semester und Fachrichtungen sind egal.
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public Team.ID getId() {
         return team.getId();
     }
@@ -59,23 +76,6 @@ public class ExtendedTeam {
 
     public void addTeamRegistration(TeamRegistration teamRegistration){
         registrations.add(teamRegistration);
-    }
-
-    public boolean hasConflictWith(ExtendedCourseGroup courseGroup, Map<Student, List<ExtendedCourseGroup>> studentsCourseGroups) {
-        for (TeamRegistration teamReg : team.getTeamRegistrations()) {
-            List<ExtendedCourseGroup> studentCourseGroups = studentsCourseGroups.get(teamReg.getStudent());
-
-            if (studentCourseGroups != null) {
-                // hier wird für alle Praktikumsgruppen, in denen ein Student Mitglied ist überprüft,
-                // ob es mit der zu überprüfenden Gruppe zu einem Konflikt käme
-                for (ExtendedCourseGroup group : studentCourseGroups) {
-                    if (group.hashConflictWith(courseGroup)) { // TODO Fachrichtung und Semester beachten! Andere Semester und Fachrichtungen sind egal.
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     @Override

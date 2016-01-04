@@ -101,4 +101,25 @@ public class ExtendedCourseGroup {
     public String toString(){
         return courseGroup.toString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ExtendedCourseGroup that = (ExtendedCourseGroup) o;
+
+        if (getCourse() != null ? !getCourse().equals(that.getCourse()) : that.getCourse() != null) return false;
+        if (courseGroup != null ? !courseGroup.equals(that.courseGroup) : that.courseGroup != null) return false;
+        return !(getTeamRegistrations() != null ? !getTeamRegistrations().equals(that.getTeamRegistrations()) : that.getTeamRegistrations() != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getCourse() != null ? getCourse().hashCode() : 0;
+        result = 31 * result + (courseGroup != null ? courseGroup.hashCode() : 0);
+        result = 31 * result + (getTeamRegistrations() != null ? getTeamRegistrations().hashCode() : 0);
+        return result;
+    }
 }

@@ -38,7 +38,7 @@ public class AlgorithmResultTableModel extends AbstractTableModel {
     public Object getValueAt(int row, int col) {
         ExtendedCourse course = courses.get(row);
         switch(col){
-            case 0 : return course.getName();
+            case 0 : return course;
             case 1 : return course.getCourseGroups().size();
             case 2 : return course.getTeamRegistrations().size(); // TODO Sobald Datenbank läuft: getAllCourseRegistrations verwenden
             case 3 : return AlgorithmUtils.round(course.getAssignmentQuantity(),2)+"%";

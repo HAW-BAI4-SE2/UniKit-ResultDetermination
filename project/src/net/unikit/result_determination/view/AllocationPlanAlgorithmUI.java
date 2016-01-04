@@ -236,7 +236,10 @@ public class AllocationPlanAlgorithmUI {
     private void initResultTable(JTabbedPane tabbedPane) {
         overviewPanel = new JPanel();
         overviewPanel.setLayout(new BorderLayout(0, 0));
+        overviewPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
         resultTable = new JTable();
+        resultTable.setDragEnabled(false);
         overviewPanel.add(resultTable.getTableHeader(), BorderLayout.PAGE_START);
         overviewPanel.add(resultTable, BorderLayout.CENTER);
         JScrollPane scrollPane = new JScrollPane(overviewPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);

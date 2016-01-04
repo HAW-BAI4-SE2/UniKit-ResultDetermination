@@ -61,7 +61,7 @@ public class ExtendedCourse {
         return course.getCourseLecture();
     }
 
-    public List<ExtendedCourseGroup> getCourseGroups() {
+    public synchronized List<ExtendedCourseGroup> getCourseGroups() {
 
         return courseGroups;
     }
@@ -138,54 +138,36 @@ public class ExtendedCourse {
         }
     }
 
-    public List<TeamRegistration> getNotMatchableTeamRegistrations(){
+    public synchronized List<TeamRegistration> getNotMatchableTeamRegistrations(){
         return notMatchableTeamRegistrations;
+    }
+
+    public List<TeamRegistration> getAssignedTeamRegistrations(){
+        List<TeamRegistration> teamRegistrations = new ArrayList<>();
+        for(TeamRegistration teamRegistration : getTeamRegistrations()){
+            if(!notMatchableTeamRegistrations.contains(teamRegistration)){
+                teamRegistrations.add(teamRegistration);
+            }
+        }
+        return teamRegistrations;
     }
 
     public double getAssignmentQuantity() {
         return ((double) (getTeamRegistrations().size() - notMatchableTeamRegistrations.size()) / getTeamRegistrations().size()) * 100;
     }
 
+    @Override
+    public String toString(){
+        return getName();
+    }
 
-    //    public void addUnassignedTeam(ExtendedTeam team){
-//        unAssignedTeams.add(team);
-//    }
-//
-//    public void removeUnassignedTeam(ExtendedTeam team){
-//        if(unAssignedTeams.contains(team)){
-//            unAssignedTeams.remove(team);
-//        }
-//        else{
-//            try {
-//                throw new NoTeamRegistrationsFoundException();
-//            } catch (NoTeamRegistrationsFoundException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-//
-//    public List<ExtendedTeam> getUnAssignedTeams() {
-//        return unAssignedTeams;
-//    }
-//
-//    public void addNotMatchableTeam(ExtendedTeam team){
-//        notMatchable.add(team);
-//    }
-//
-//    public void removeNotMatchableTeam(ExtendedTeam team){
-//        if(notMatchable.contains(team)){
-//            notMatchable.remove(team);
-//        }else{
-//            try {
-//                throw new NoTeamRegistrationsFoundException(); //Todo NOTEAMFOUND
-//            } catch (NoTeamRegistrationsFoundException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-//
-//    public List<ExtendedTeam> getNotMatchable(){
-//        return notMatchable;
-//    }
+    @Override
+    public boolean equals(Object o) {
+        return course.equals(o);
+    }
 
+    @Override
+    public int hashCode() {
+        return course.hashCode();
+    }
 }

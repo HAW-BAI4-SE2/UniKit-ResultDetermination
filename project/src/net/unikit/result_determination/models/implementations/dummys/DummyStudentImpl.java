@@ -85,7 +85,32 @@ public class DummyStudentImpl implements Student {
 
     @Override
     public FieldOfStudy getFieldOfStudy() {
-        throw new UnsupportedOperationException();
+        return new FieldOfStudy() {
+            @Override
+            public FieldOfStudy.ID getId() {
+                return null;
+            }
+
+            @Override
+            public String getName() {
+                return "Informatik";
+            }
+
+            @Override
+            public void setName(String s) {
+
+            }
+
+            @Override
+            public String getAbbreviation() {
+                return null;
+            }
+
+            @Override
+            public void setAbbreviation(String s) {
+
+            }
+        };
     }
 
     @Override
@@ -95,7 +120,7 @@ public class DummyStudentImpl implements Student {
 
     @Override
     public int getSemester() {
-        throw new UnsupportedOperationException();
+        return 4;
     }
 
     @Override

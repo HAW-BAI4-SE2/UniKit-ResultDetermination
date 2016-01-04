@@ -17,6 +17,7 @@ import java.util.*;
 public class GreedyAllocationPlanAlgorithm {
 
     private Map<Course, Integer> teamPreservations;
+
     private Map<Student,List<ExtendedCourseGroup>> studentsCourseGroups;
 
     public GreedyAllocationPlanAlgorithm() {
@@ -33,13 +34,13 @@ public class GreedyAllocationPlanAlgorithm {
      *       if (g not null)
      *          g.addRegistration(team);
      *       else
-     *          split Team into separated one-person-teams
-     *    3. For every unfinished Team
-     *       Group g = findGroup(team,c); //
+     *          destroy Team and mark the TeamRegistrations as unfinished
+     *    3. For every unfinished TeamRegistration
+     *       Group g = findGroup(teamReg,c); //
      *       if (g not null)
-     *          g.addRegistration(team);
+     *          g.addRegistration(teamReg);
      *       else
-     *          split Team into separated one-person-teams
+     *          mark teamReg as unMatchable
      *
      */
     public NewAllocationPlan calculateAllocationPlan(List<ExtendedCourse> courses) throws NotEnoughCourseGroupsException, CourseGroupDoesntExistException, CourseGroupFullException {
@@ -50,7 +51,6 @@ public class GreedyAllocationPlanAlgorithm {
 
 
         AlgorithmUtils.checkAvailableSlotsStatus(courses);
-//        calculateConflictsBetweenCourses(courses, allocPlan);
 
         for (ExtendedCourse course : courses) {
 
@@ -67,11 +67,7 @@ public class GreedyAllocationPlanAlgorithm {
                     registerTeam(t,possibleCourseGroup);
                     course.countTeamPreservation();
                 } else {
-//                    System.out.println("@@@@ FEHLER: " + t + " -> " + course.getName());
                     for (TeamRegistration s : t.getTeamRegistrations()) {
-//                        ExtendedTeam singleStudentTeam = new ExtendedTeam(new DummyTeamImpl(course.getCourse()),course);
-//                        singleStudentTeam.addTeamRegistration(s);
-//                        course.addUnassignedTeam(singleStudentTeam);
                         unAssignedTeamRegistrations.add(s);
                     }
                 }
@@ -80,26 +76,14 @@ public class GreedyAllocationPlanAlgorithm {
             System.out.println(course.getName() + " Team Preservation: " +course.getTeamPreservation());
             globalTeamPreservation += course.getNumberOfTeamPreservations();
 
-//            System.out.println("**** Check Unfinished Teams ***");
-//            for (ExtendedTeam t : course.getUnAssignedTeams()) {
-//
-//                ExtendedCourseGroup possibleCourseGroup = findPossibileCourseGroupFor(t, course); // throws CourseGroupDoesntExistException
-//
-//                if (possibleCourseGroup != null) {
-//                    registerTeam(t,possibleCourseGroup);
-//                } else {
-//                    course.addNotMatchableTeam(t);
-//                }
-//            }
             for(TeamRegistration teamRegistration : unAssignedTeamRegistrations){
                 ExtendedCourseGroup possibleCourseGroup = findPossibileCourseGroupFor(teamRegistration, course);
                 if(possibleCourseGroup != null){
-                    possibleCourseGroup.addTeamRegistration(teamRegistration);
+                    registerTeamRegistration(teamRegistration,possibleCourseGroup);
                 } else{
                     course.addNotMatchableTeamRegistration(teamRegistration);
                 }
             }
-//            notMatchable+=course.getNotMatchable().size();
             notMatchable+=course.getNotMatchableTeamRegistrations().size();
         }
         long end = System.currentTimeMillis();
@@ -112,6 +96,28 @@ public class GreedyAllocationPlanAlgorithm {
         allocationPlan.setNumberOfTeamPreservation(globalTeamPreservation);
         allocationPlan.setNumberOfNotMatchableRegistrations(notMatchable);
         return allocationPlan;
+    }
+
+    private void registerTeamRegistration(TeamRegistration teamRegistration, ExtendedCourseGroup possibleCourseGroup) {
+        try {
+            possibleCourseGroup.addTeamRegistration(teamRegistration);
+
+            // Save the courseGroups that are assigned to a student
+            List<ExtendedCourseGroup> studentsCourseGroups;
+
+            // Wenn der Student noch keiner einzigen Gruppe zugewiesen wurde (dann hat er auch noch keinen Map Eintrag)
+            if (this.studentsCourseGroups.get(teamRegistration.getStudent()) == null) {
+                studentsCourseGroups = new ArrayList<>();
+            } else {
+                studentsCourseGroups = this.studentsCourseGroups.get(teamRegistration.getStudent());
+            }
+            studentsCourseGroups.add(possibleCourseGroup);
+            this.studentsCourseGroups.put(teamRegistration.getStudent(), studentsCourseGroups); // update
+
+
+        } catch (CourseGroupFullException e) {
+            e.printStackTrace();
+        }
     }
 
     private void registerTeam(ExtendedTeam t, ExtendedCourseGroup possibleCourseGroup){
@@ -138,10 +144,75 @@ public class GreedyAllocationPlanAlgorithm {
         }
     }
 
+    public void fixNotMatchables(List<ExtendedCourse> courses,NewAllocationPlan allocationPlan) throws CourseGroupDoesntExistException, CourseGroupFullException {
+        while(allocationPlan.getNumberOfNotMatchableRegistrations() != 0){
+            int notMatchable=0;
+            for(ExtendedCourse course : courses){
+                for(int j=0; j< course.getNotMatchableTeamRegistrations().size();j++){
+                    TeamRegistration teamRegistration = course.getNotMatchableTeamRegistrations().get(j);
+                    for(int i=0; i<course.getCourseGroups().size();i++){
+                        ExtendedCourseGroup group = course.getCourseGroups().get(i);
+                        int size = group.getMaxGroupSize()+1;
+                        group.setMaxGroupSize(size);
+                    }
+
+//                for(ExtendedCourseGroup group : course.getCourseGroups()){
+//                    int size = group.getMaxGroupSize()+1;
+//                    group.setMaxGroupSize(size);
+//                }
+                    ExtendedCourseGroup possibleCourseGroup = findPossibileCourseGroupFor(teamRegistration, course);
+                    if(possibleCourseGroup != null){
+                        registerTeamRegistration(teamRegistration,possibleCourseGroup);
+                        course.removeNotMatchableTeamRegistration(teamRegistration);
+                    }
+                    notMatchable+=course.getNotMatchableTeamRegistrations().size();
+                }
+            }
+            allocationPlan.setNumberOfNotMatchableRegistrations(notMatchable);
+        }
+        System.out.println("*** New AllocationPlan ***");
+        System.out.println(allocationPlan);
+
+    }
+
+    public void fixNotMatchables(ExtendedCourse course, NewAllocationPlan allocationPlan) throws CourseGroupFullException, CourseGroupDoesntExistException {
+        int notMatchableOld = course.getNotMatchableTeamRegistrations().size();
+        int notMatchable = 0;
+        while(notMatchable < notMatchableOld){
+            for(int j=0; j< course.getNotMatchableTeamRegistrations().size();j++){
+                TeamRegistration teamRegistration = course.getNotMatchableTeamRegistrations().get(j);
+                for(int i=0; i<course.getCourseGroups().size();i++){
+                    ExtendedCourseGroup group = course.getCourseGroups().get(i);
+                    int size = group.getMaxGroupSize()+1;
+                    group.setMaxGroupSize(size);
+                }
+
+//                for(ExtendedCourseGroup group : course.getCourseGroups()){
+//                    int size = group.getMaxGroupSize()+1;
+//                    group.setMaxGroupSize(size);
+//                }
+                ExtendedCourseGroup possibleCourseGroup = findPossibileCourseGroupFor(teamRegistration, course);
+                if(possibleCourseGroup != null){
+                    registerTeamRegistration(teamRegistration,possibleCourseGroup);
+                    course.removeNotMatchableTeamRegistration(teamRegistration);
+                }
+                notMatchable++;
+            }
+        }
+        allocationPlan.setNumberOfNotMatchableRegistrations((allocationPlan.getNumberOfNotMatchableRegistrations()-notMatchableOld));
+        System.out.println("*** New AllocationPlan ***!");
+        System.out.println(allocationPlan);
+    }
+
 
 
     public Map<Course, Integer> getTeamPreservations() {
         return teamPreservations;
+    }
+
+
+    public Map<Student, List<ExtendedCourseGroup>> getStudentsCourseGroups() {
+        return studentsCourseGroups;
     }
 
     /**
@@ -161,7 +232,7 @@ public class GreedyAllocationPlanAlgorithm {
     }
 
     /**
-     * Tries to find a possibile CourseGroup for a team
+     * Tries to find a possibile CourseGroup for a TeamRegistration
      *
      * @param teamRegistration the TeamRegistration
      * @param course the course
@@ -176,6 +247,9 @@ public class GreedyAllocationPlanAlgorithm {
         return null;
     }
 
+    /*
+     * checks if there is a conflict between a Teamregistration and a CourseGroup
+     */
     private boolean conflict(TeamRegistration teamRegistration, ExtendedCourseGroup courseGroup, Map<Student, List<ExtendedCourseGroup>> studentsCourseGroups) {
         List<ExtendedCourseGroup> studentCourseGroups = studentsCourseGroups.get(teamRegistration.getStudent());
         if (studentCourseGroups != null) {
@@ -189,7 +263,4 @@ public class GreedyAllocationPlanAlgorithm {
         }
         return false;
     }
-
-//    private boolean conflict(TeamRegistration teamRegistration, )
-
 }

@@ -69,6 +69,6 @@ public class DummyCourseGroupImpl implements CourseGroup {
 
     @Override
     public void setMaxGroupSize(int i) {
-        throw new UnsupportedOperationException();
+        maxGroupSize=i;
     }
 }
