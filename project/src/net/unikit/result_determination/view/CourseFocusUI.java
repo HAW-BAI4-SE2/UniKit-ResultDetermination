@@ -13,8 +13,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 
-public class CourseFocusUI
-{
+public class CourseFocusUI {
 
     private final String teamPreservation = "Teamerhaltung:  ";
     private final String assignments = "Belegungen:  ";
@@ -23,12 +22,10 @@ public class CourseFocusUI
     private final JLabel teamPreservationLabel;
     private final JLabel assignmentsLabel;
     private JLabel courseNameLabel;
-
-//    private final JComboBox courseGroupsComboBox;
-
     private final JButton manuallySolutionButton;
-
     private JButton autoSolutionButton;
+    private JButton retryButton;
+    private JButton deleteAllocationButton;
 
     private JTable assignedStudentsTable;
     private JTable unassignedStudentsTable;
@@ -42,8 +39,7 @@ public class CourseFocusUI
     /**
      * Create the frame.
      */
-    public CourseFocusUI(ExtendedCourse course)
-    {
+    public CourseFocusUI(ExtendedCourse course) {
         frame = new JFrame(course.getName());
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setBounds(100, 100, 650, 400);
@@ -65,19 +61,19 @@ public class CourseFocusUI
         courseNamePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 20));
 
 
-        courseNameLabel = new JLabel("Veranstaltung: "+course.getAbbreviation());
+        courseNameLabel = new JLabel("Veranstaltung: " + course.getAbbreviation());
         courseNameLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
         courseNamePanel.add(courseNameLabel);
 
         JPanel buttonPanel = new JPanel();
         optionsPanel.add(buttonPanel, BorderLayout.CENTER);
-        buttonPanel.setLayout(new GridLayout(4, 1, 0, 0));
+        buttonPanel.setLayout(new GridLayout(5, 1, 0, 0));
 
-        teamPreservationLabel = new JLabel(teamPreservation + AlgorithmUtils.round(course.getTeamPreservation(),2)+"%");
+        teamPreservationLabel = new JLabel(teamPreservation + AlgorithmUtils.round(course.getTeamPreservation(), 2) + "%");
         teamPreservationLabel.setHorizontalAlignment(SwingConstants.CENTER);
         buttonPanel.add(teamPreservationLabel);
 
-        assignmentsLabel = new JLabel(assignments+ AlgorithmUtils.round(course.getAssignmentQuantity(), 2)+"%");
+        assignmentsLabel = new JLabel(assignments + AlgorithmUtils.round(course.getAssignmentQuantity(), 2) + "%");
         assignmentsLabel.setHorizontalAlignment(SwingConstants.CENTER);
         buttonPanel.add(assignmentsLabel);
 
@@ -87,20 +83,18 @@ public class CourseFocusUI
         autoSolutionButton = new JButton("Finde Lösung");
         buttonPanel.add(autoSolutionButton);
 
+        retryButton = new JButton("Neue Belegung");
+        buttonPanel.add(retryButton);
+
+        deleteAllocationButton = new JButton("Lösche Belegung");
+//        buttonPanel.add(deleteAllocationButton);
+
         JPanel courseGroupsPanel = new JPanel();
         optionsPanel.add(courseGroupsPanel, BorderLayout.SOUTH);
-        courseGroupsPanel.setLayout(new BorderLayout(0,0));
-
-//        courseGroupsComboBox = new JComboBox();
-//
-//        for(ExtendedCourseGroup courseGroup : course.getCourseGroups()){
-//            courseGroupsComboBox.addItem(courseGroup);
-//        }
-//
-//        courseGroupsPanel.add(courseGroupsComboBox);
+        courseGroupsPanel.setLayout(new BorderLayout(0, 0));
 
         courseGroupsTable = new JTable(new CourseGroupTableModel(course.getCourseGroups()));
-        courseGroupsPanel.add(courseGroupsTable.getTableHeader(),BorderLayout.PAGE_START);
+        courseGroupsPanel.add(courseGroupsTable.getTableHeader(), BorderLayout.PAGE_START);
         courseGroupsPanel.add(courseGroupsTable);
         courseGroupsTable.setDragEnabled(false);
         courseGroupsTable.setFillsViewportHeight(true);
@@ -115,9 +109,9 @@ public class CourseFocusUI
 
         JLabel tableLegend = new JLabel("Zugewiesene Studenten / Nicht zugewiesene Studenten");
         tableLegend.setHorizontalAlignment(SwingConstants.CENTER);
-        tablePanel.add(tableLegend,BorderLayout.NORTH);
+        tablePanel.add(tableLegend, BorderLayout.NORTH);
         studentsSplitPane.setDividerLocation(200);
-        splitPane.setDividerLocation(150);
+        splitPane.setDividerLocation(200);
 
         // ***** Tables *****
 
@@ -132,14 +126,14 @@ public class CourseFocusUI
         assignedStudentsUnderlyingPanel.add(assignedStudentsTable.getTableHeader(), BorderLayout.PAGE_START);
         assignedStudentsUnderlyingPanel.add(assignedStudentsTable, BorderLayout.CENTER);
 
-        JScrollPane assignedStudentsPane = new JScrollPane(assignedStudentsUnderlyingPanel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+        JScrollPane assignedStudentsPane = new JScrollPane(assignedStudentsUnderlyingPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         studentsSplitPane.setLeftComponent(assignedStudentsPane);
         assignedStudentsTable.setFillsViewportHeight(true);
 
         // unassigned Students
         JPanel unassignedStudentsUnderlyingPanel = new JPanel();
-        unassignedStudentsUnderlyingPanel.setLayout(new BorderLayout(0,0));
+        unassignedStudentsUnderlyingPanel.setLayout(new BorderLayout(0, 0));
         unassignedStudentsUnderlyingPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         unassignedStudentsTable = new JTable();
@@ -147,17 +141,26 @@ public class CourseFocusUI
         unassignedStudentsTable.setFillsViewportHeight(true);
 
         unassignedStudentsUnderlyingPanel.add(unassignedStudentsTable.getTableHeader(), BorderLayout.PAGE_START);
-        unassignedStudentsUnderlyingPanel.add(unassignedStudentsTable,BorderLayout.CENTER);
-        JScrollPane notAssignedStudentPane = new JScrollPane(unassignedStudentsUnderlyingPanel,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+        unassignedStudentsUnderlyingPanel.add(unassignedStudentsTable, BorderLayout.CENTER);
+        JScrollPane notAssignedStudentPane = new JScrollPane(unassignedStudentsUnderlyingPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         studentsSplitPane.setRightComponent(notAssignedStudentPane);
     }
+
     public JButton getManuallySolutionButton() {
         return manuallySolutionButton;
     }
 
     public JButton getAutoSolutionButton() {
         return autoSolutionButton;
+    }
+
+    public JButton getDeleteAllocationButton(){
+        return deleteAllocationButton;
+    }
+
+    public JButton getRetryButton(){
+        return retryButton;
     }
 
     public JTable getAssignedStudentsTable() {
@@ -168,18 +171,16 @@ public class CourseFocusUI
         return unassignedStudentsTable;
     }
 
-    //    }
-//        return courseGroupsComboBox;
     public JTable getCourseGroupsTable() {
         return courseGroupsTable;
     }
-
-//    public JComboBox getCourseGroupsComboBox() {
 
     public void updateUI(ExtendedCourse course, Map<Student, List<ExtendedCourseGroup>> studentsCourseGroups) {
 
         AssignedStudentsTableModel assignedTableModel = new AssignedStudentsTableModel(course.getAssignedTeamRegistrations(), studentsCourseGroups);
         assignedStudentsTable.setModel(assignedTableModel);
+
+//        assignedTableModel.fireTableCellUpdated(); // TODO
 
         UnassignedStudentsTableModel unassignedTableModel = new UnassignedStudentsTableModel(course.getNotMatchableTeamRegistrations());
         unassignedStudentsTable.setModel(unassignedTableModel);
@@ -187,7 +188,11 @@ public class CourseFocusUI
         CourseGroupTableModel courseGroupTableModel = new CourseGroupTableModel(course.getCourseGroups());
         courseGroupsTable.setModel(courseGroupTableModel);
 
-        teamPreservationLabel.setText(teamPreservation + AlgorithmUtils.round(course.getTeamPreservation(),2)+"%");
-        assignmentsLabel.setText(assignments+ AlgorithmUtils.round(course.getAssignmentQuantity(), 2)+"%");
+        teamPreservationLabel.setText(teamPreservation + AlgorithmUtils.round(course.getTeamPreservation(), 2) + "%");
+        assignmentsLabel.setText(assignments + AlgorithmUtils.round(course.getAssignmentQuantity(), 2) + "%");
+    }
+
+    public JFrame getFrame() {
+        return frame;
     }
 }

@@ -144,16 +144,22 @@ public class ExtendedCourse {
 
     public List<TeamRegistration> getAssignedTeamRegistrations(){
         List<TeamRegistration> teamRegistrations = new ArrayList<>();
-        for(TeamRegistration teamRegistration : getTeamRegistrations()){
-            if(!notMatchableTeamRegistrations.contains(teamRegistration)){
+        for(ExtendedCourseGroup group : courseGroups){
+            for(TeamRegistration teamRegistration : group.getTeamRegistrations()){
                 teamRegistrations.add(teamRegistration);
             }
         }
+//        for(TeamRegistration teamRegistration : getTeamRegistrations()){
+//            if(!notMatchableTeamRegistrations.contains(teamRegistration)){
+//                teamRegistrations.add(teamRegistration);
+//            }
+//        }
         return teamRegistrations;
     }
 
     public double getAssignmentQuantity() {
-        return ((double) (getTeamRegistrations().size() - notMatchableTeamRegistrations.size()) / getTeamRegistrations().size()) * 100;
+//        return ((double) (getTeamRegistrations().size() - notMatchableTeamRegistrations.size()) / getTeamRegistrations().size()) * 100;
+        return ((double) (getAssignedTeamRegistrations().size()) / getTeamRegistrations().size()) * 100;
     }
 
     @Override
@@ -169,5 +175,19 @@ public class ExtendedCourse {
     @Override
     public int hashCode() {
         return course.hashCode();
+    }
+
+    public void reset() {
+        this.teamPreservation = 0;
+        notMatchableTeamRegistrations = new ArrayList<>();
+        courseGroups = new ArrayList<>();
+        for (CourseGroup group : course.getCourseGroups()) {
+            courseGroups.add(new ExtendedCourseGroup(group, this));
+        }
+
+        teams = new ArrayList<>();
+        for (Team t : course.getTeams()) {
+            teams.add(new ExtendedTeam(t, this));
+        }
     }
 }

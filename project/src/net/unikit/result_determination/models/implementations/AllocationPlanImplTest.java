@@ -40,31 +40,4 @@ public class AllocationPlanImplTest extends TestCase {
         assertTrue(allocationPlan.isCourseGroupFull(group));
     }
 
-    public void testConflict() throws Exception {
-
-    }
-
-    public void testConflict1() throws Exception {
-
-    }
-
-    public void testConflict2() throws Exception {
-
-    }
-
-    public void testConflict3() throws Exception {
-
-    }
-
-    public void testRemoveStudent() throws Exception {
-
-    }
-
-    public void testRegisterStudent() throws Exception {
-
-    }
-
-    public void testRegisterTeam() throws Exception {
-
-    }
 }

@@ -16,7 +16,7 @@ public class UnassignedStudentsTableModel extends AbstractTableModel {
     private List<TeamRegistration> unassignedTeamRegistrations;
 
     public UnassignedStudentsTableModel(List<TeamRegistration> unassignedTeamRegistrations){
-        tableHeaders = new String[]{ "Matrikelnummer" , "Studiengang" , "Semester" };
+        tableHeaders = new String[]{ "MatrNr." , "Studiengang" , "Semester" };
         this.unassignedTeamRegistrations = unassignedTeamRegistrations;
     }
 
@@ -32,11 +32,14 @@ public class UnassignedStudentsTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-        TeamRegistration teamRegistration = unassignedTeamRegistrations.get(row);
-        switch(col){
-            case 0 : return teamRegistration.getStudent().getStudentNumber().getValue();
-            case 1 : return teamRegistration.getStudent().getFieldOfStudy().getName();
-            case 2 : return teamRegistration.getStudent().getSemester();
+        if(unassignedTeamRegistrations.size() > 0){
+            TeamRegistration teamRegistration = unassignedTeamRegistrations.get(row);
+            switch(col){
+                case 0 : return teamRegistration.getStudent().getStudentNumber().getValue();
+                case 1 : return teamRegistration.getStudent().getFieldOfStudy().getName();
+                case 2 : return teamRegistration.getStudent().getSemester();
+            }
+
         }
         return null;
     }

@@ -19,7 +19,7 @@ public class AssignedStudentsTableModel extends AbstractTableModel {
     private  Map<Student, List<ExtendedCourseGroup>> studentsCourseGroups;
 
     public AssignedStudentsTableModel(List<TeamRegistration> teamRegistrations, Map<Student, List<ExtendedCourseGroup>> studentsCourseGroups){
-        tableHeaders = new String[]{ "Matrikelnummer", "Gruppe", "Studiengang" , "Semester"};
+        tableHeaders = new String[]{ "MatrNr.", "Gruppe", "Studiengang" , "Semester"};
         this.teamRegistrations = teamRegistrations;
         this.studentsCourseGroups = studentsCourseGroups;
     }
@@ -35,20 +35,22 @@ public class AssignedStudentsTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-        TeamRegistration teamRegistration = teamRegistrations.get(row);
-        switch(col){
-            case 0 : return teamRegistration.getStudent().getStudentNumber().getValue();
-            case 1 : {
-                List<ExtendedCourseGroup> groups = studentsCourseGroups.get(teamRegistration.getStudent());
-                for(ExtendedCourseGroup group : groups){
-                    if(group.getCourse().equals(teamRegistration.getTeam().getCourse())){
-                        return group.getGroupNumber();
+        if(teamRegistrations.size() > 0){
+            TeamRegistration teamRegistration = teamRegistrations.get(row);
+            switch(col){
+                case 0 : return teamRegistration.getStudent().getStudentNumber().getValue();
+                case 1 : {
+                    List<ExtendedCourseGroup> groups = studentsCourseGroups.get(teamRegistration.getStudent());
+                    for(ExtendedCourseGroup group : groups){
+                        if(group.getCourse().equals(teamRegistration.getTeam().getCourse())){
+                            return group.getGroupNumber();
+                        }
                     }
+                    return "";
                 }
-                return "";
+                case 2 : return teamRegistration.getStudent().getFieldOfStudy().getName();
+                case 3 : return teamRegistration.getStudent().getSemester();
             }
-            case 2 : return teamRegistration.getStudent().getFieldOfStudy().getName();
-            case 3 : return teamRegistration.getStudent().getSemester();
         }
         return null;
     }

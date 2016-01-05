@@ -15,7 +15,7 @@ public class CourseGroupTableModel extends AbstractTableModel {
     private List<ExtendedCourseGroup> courseGroups;
 
     public CourseGroupTableModel(List<ExtendedCourseGroup> courseGroups){
-        tableHeaders = new String[]{ "Gruppe" , "Studenten" , "Maximale Gruppengröße"};
+        tableHeaders = new String[]{ "Gruppe" , "Studenten" , "Max"};
         this.courseGroups = courseGroups;
     }
 

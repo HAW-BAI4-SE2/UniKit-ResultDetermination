@@ -63,7 +63,7 @@ public class AllocationPlanAlgorithmUI {
      * Create the frame.
      */
     public AllocationPlanAlgorithmUI() {
-        frame = new JFrame();
+        frame = new JFrame("UniKit-Belegungsplan-Builder");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        frame.setExtendedState(Frame.MAXIMIZED_BOTH);
         frame.setBounds(100, 100, 800, 640);
@@ -203,6 +203,10 @@ public class AllocationPlanAlgorithmUI {
         this.numberOfNotMatchableStudentsLabel.setText(this.numberOfNotMatchableStudents + notMatchable);
     }
 
+    private void updateResultTable(List<ExtendedCourse> courses) {
+        resultTable.setModel(new AlgorithmResultTableModel(courses));
+    }
+
     /*
          * Initializes the Menu
          */
@@ -221,10 +225,6 @@ public class AllocationPlanAlgorithmUI {
 
         exportAllocationPlanMenuItem = new JMenuItem("Exportieren");
         allocationPlanMenu.add(exportAllocationPlanMenuItem);
-    }
-
-    private void updateResultTable(List<ExtendedCourse> courses) {
-        resultTable.setModel(new AlgorithmResultTableModel(courses));
     }
 
     /*

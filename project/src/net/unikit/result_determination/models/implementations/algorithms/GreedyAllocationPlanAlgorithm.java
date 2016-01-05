@@ -5,7 +5,6 @@ import net.unikit.result_determination.models.exceptions.CourseGroupDoesntExistE
 import net.unikit.result_determination.models.exceptions.CourseGroupFullException;
 import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsException;
 import net.unikit.result_determination.models.implementations.*;
-import net.unikit.result_determination.models.implementations.dummys.DummyTeamImpl;
 import net.unikit.result_determination.utils.AlgorithmUtils;
 import net.unikit.result_determination.utils.NewTeamSizeComparator;
 
@@ -16,12 +15,9 @@ import java.util.*;
  */
 public class GreedyAllocationPlanAlgorithm {
 
-    private Map<Course, Integer> teamPreservations;
-
     private Map<Student,List<ExtendedCourseGroup>> studentsCourseGroups;
 
     public GreedyAllocationPlanAlgorithm() {
-        teamPreservations = new HashMap<>();
         this.studentsCourseGroups = new HashMap<>();
     }
 
@@ -92,6 +88,7 @@ public class GreedyAllocationPlanAlgorithm {
         System.out.println("Global Team Preservation: " +globalTeamPreservation);
 
         NewAllocationPlan allocationPlan = new NewAllocationPlan(courses);
+        allocationPlan.setNumberOfStudents(studentsCourseGroups.size());
         allocationPlan.setAlgorithmRuntime(algorithmRuntime);
         allocationPlan.setNumberOfTeamPreservation(globalTeamPreservation);
         allocationPlan.setNumberOfNotMatchableRegistrations(notMatchable);
@@ -191,6 +188,7 @@ public class GreedyAllocationPlanAlgorithm {
 //                    int size = group.getMaxGroupSize()+1;
 //                    group.setMaxGroupSize(size);
 //                }
+
                 ExtendedCourseGroup possibleCourseGroup = findPossibileCourseGroupFor(teamRegistration, course);
                 if(possibleCourseGroup != null){
                     registerTeamRegistration(teamRegistration,possibleCourseGroup);
@@ -203,13 +201,6 @@ public class GreedyAllocationPlanAlgorithm {
         System.out.println("*** New AllocationPlan ***!");
         System.out.println(allocationPlan);
     }
-
-
-
-    public Map<Course, Integer> getTeamPreservations() {
-        return teamPreservations;
-    }
-
 
     public Map<Student, List<ExtendedCourseGroup>> getStudentsCourseGroups() {
         return studentsCourseGroups;
@@ -247,6 +238,16 @@ public class GreedyAllocationPlanAlgorithm {
         return null;
     }
 
+    public List<ExtendedCourseGroup> findPossibileCourseGroupsFor(TeamRegistration teamRegistration, ExtendedCourse course){
+        List<ExtendedCourseGroup> possibileCourseGroups = new ArrayList<>();
+        for (ExtendedCourseGroup courseGroup : course.getCourseGroups()) {
+            if (!conflict(teamRegistration, courseGroup, studentsCourseGroups)) {
+                possibileCourseGroups.add(courseGroup);
+            }
+        }
+        return possibileCourseGroups;
+    }
+
     /*
      * checks if there is a conflict between a Teamregistration and a CourseGroup
      */
@@ -263,4 +264,65 @@ public class GreedyAllocationPlanAlgorithm {
         }
         return false;
     }
+
+    public void recalculateAllocations(ExtendedCourse course, NewAllocationPlan allocationPlan) throws CourseGroupDoesntExistException {
+        System.out.println("@@@ Recalculate Allocations for " + course);
+        resetAllocation(course, allocationPlan);
+
+        List<TeamRegistration> unAssignedTeamRegistrations = new ArrayList<>();
+        List<ExtendedTeam> teams = course.getTeams();
+        Collections.shuffle(teams);
+        Collections.sort(teams, new NewTeamSizeComparator()); // Innerhalb der Größe wird es trotzdem ein anderes geben
+
+        for (ExtendedTeam t : teams) {
+
+            ExtendedCourseGroup possibleCourseGroup = findPossibileCourseGroupFor(t, course); // throws CourseGroupDoesntExistException
+
+            if (possibleCourseGroup != null) {
+                registerTeam(t, possibleCourseGroup);
+                course.countTeamPreservation();
+            } else {
+                for (TeamRegistration s : t.getTeamRegistrations()) {
+                    unAssignedTeamRegistrations.add(s);
+                }
+            }
+        }
+        Collections.shuffle(unAssignedTeamRegistrations);
+        for(TeamRegistration teamRegistration : unAssignedTeamRegistrations){
+            ExtendedCourseGroup possibleCourseGroup = findPossibileCourseGroupFor(teamRegistration, course);
+            if(possibleCourseGroup != null){
+                registerTeamRegistration(teamRegistration, possibleCourseGroup);
+            } else{
+                course.addNotMatchableTeamRegistration(teamRegistration);
+            }
+        }
+        allocationPlan.setNumberOfNotMatchableRegistrations(allocationPlan.getNumberOfNotMatchableRegistrations()+course.getNotMatchableTeamRegistrations().size());
+    }
+
+    public void resetAllocation(ExtendedCourse course, NewAllocationPlan allocationPlan) {
+        int numberOfNotMatchable = course.getNotMatchableTeamRegistrations().size();
+        course.reset();
+        for(TeamRegistration teamRegistration : course.getTeamRegistrations()){
+            List<ExtendedCourseGroup> newStudentGroups = new ArrayList<>();
+            List<ExtendedCourseGroup> studentsGroups = studentsCourseGroups.get(teamRegistration.getStudent());
+            for(ExtendedCourseGroup group : studentsGroups){
+//                System.out.println(group.getCourse().getName() + " und " + course.getName());
+                if(!group.getCourse().getName().equals(course.getName())){
+                    newStudentGroups.add(group);
+                }
+            }
+            studentsCourseGroups.put(teamRegistration.getStudent(),newStudentGroups);
+        }
+        allocationPlan.setNumberOfNotMatchableRegistrations(allocationPlan.getNumberOfNotMatchableRegistrations()-numberOfNotMatchable);
+    }
+
+    public boolean isPossibileCourseGroup(TeamRegistration teamRegistration, ExtendedCourseGroup courseGroup) {
+        for(ExtendedCourseGroup group : studentsCourseGroups.get(teamRegistration.getStudent())){
+            if(group.hashConflictWith(courseGroup)){
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

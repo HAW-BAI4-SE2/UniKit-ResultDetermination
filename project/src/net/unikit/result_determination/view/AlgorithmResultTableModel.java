@@ -17,7 +17,7 @@ public class AlgorithmResultTableModel extends AbstractTableModel {
 
     public AlgorithmResultTableModel(List<ExtendedCourse> courses){
         this.courses = courses;
-        tableHeaders = new String[]{ "Veranstaltung", "Gruppen", "Studenten", "Verarbeitet","Teamerhaltung" };
+        tableHeaders = new String[]{ "Veranstaltung", "Gruppen", "Studenten", "Belegungen","Teamerhaltung" };
     }
 
     @Override

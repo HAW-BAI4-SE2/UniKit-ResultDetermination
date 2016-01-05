@@ -14,16 +14,18 @@ public class ExtendedCourseGroup {
 
     private ExtendedCourse course;
     private CourseGroup courseGroup;
+    private int newMaxGroupSize;
 
     private List<TeamRegistration> teamRegistrations;
 
     public ExtendedCourseGroup(CourseGroup courseGroup, ExtendedCourse course){
         this.course = course;
         this.courseGroup = courseGroup;
+        newMaxGroupSize = courseGroup.getMaxGroupSize();
         teamRegistrations = new ArrayList<>();
     }
 
-    public void addTeamRegistration(TeamRegistration teamRegistration) throws CourseGroupFullException {
+    public synchronized void addTeamRegistration(TeamRegistration teamRegistration) throws CourseGroupFullException {
         if(!isFull()){
             teamRegistrations.add(teamRegistration);
         }
@@ -32,7 +34,7 @@ public class ExtendedCourseGroup {
         }
     }
 
-    public void removeTeamRegistration(TeamRegistration teamRegistration) throws NoTeamRegistrationsFoundException {
+    public synchronized void removeTeamRegistration(TeamRegistration teamRegistration) throws NoTeamRegistrationsFoundException {
         if(teamRegistrations.contains(teamRegistration)){
             teamRegistrations.remove(teamRegistration);
         }
@@ -41,8 +43,8 @@ public class ExtendedCourseGroup {
         }
     }
 
-    public boolean isFull(){
-        return teamRegistrations.size() >= courseGroup.getMaxGroupSize();
+    public synchronized boolean isFull(){
+        return teamRegistrations.size() >= newMaxGroupSize;
     }
 
     public CourseGroup.ID getId() {
@@ -74,8 +76,12 @@ public class ExtendedCourseGroup {
         return getMaxGroupSize()-assignedPlaces;
     }
 
+    public CourseGroup getCourseGroup(){
+        return courseGroup;
+    }
+
     public int getMaxGroupSize() {
-        return courseGroup.getMaxGroupSize();
+        return newMaxGroupSize;
     }
 
     public int getGroupNumber() {
@@ -83,7 +89,7 @@ public class ExtendedCourseGroup {
     }
 
     public void setMaxGroupSize(int i) {
-        courseGroup.setMaxGroupSize(i);
+        newMaxGroupSize=i;
     }
 
     public boolean hashConflictWith(ExtendedCourseGroup courseGroup) {
@@ -109,17 +115,15 @@ public class ExtendedCourseGroup {
 
         ExtendedCourseGroup that = (ExtendedCourseGroup) o;
 
-        if (getCourse() != null ? !getCourse().equals(that.getCourse()) : that.getCourse() != null) return false;
-        if (courseGroup != null ? !courseGroup.equals(that.courseGroup) : that.courseGroup != null) return false;
-        return !(getTeamRegistrations() != null ? !getTeamRegistrations().equals(that.getTeamRegistrations()) : that.getTeamRegistrations() != null);
+        if (course != null ? !course.equals(that.course) : that.course != null) return false;
+        return !(courseGroup != null ? !courseGroup.equals(that.courseGroup) : that.courseGroup != null);
 
     }
 
     @Override
     public int hashCode() {
-        int result = getCourse() != null ? getCourse().hashCode() : 0;
+        int result = course != null ? course.hashCode() : 0;
         result = 31 * result + (courseGroup != null ? courseGroup.hashCode() : 0);
-        result = 31 * result + (getTeamRegistrations() != null ? getTeamRegistrations().hashCode() : 0);
         return result;
     }
 }
