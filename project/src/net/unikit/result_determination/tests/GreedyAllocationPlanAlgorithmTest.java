@@ -8,13 +8,9 @@ import net.unikit.result_determination.models.exceptions.NotEnoughCourseGroupsEx
 import net.unikit.result_determination.models.implementations.*;
 import net.unikit.result_determination.models.implementations.algorithms.GreedyAllocationPlanAlgorithm;
 import net.unikit.result_determination.models.implementations.dummys.DummyDataGenerator;
-import net.unikit.result_determination.models.interfaces.AlgorithmSettings;
-import net.unikit.result_determination.models.interfaces.AllocationPlan;
-import net.unikit.result_determination.models.interfaces.AllocationPlanAlgorithm;
 import net.unikit.result_determination.utils.AlgorithmUtils;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
